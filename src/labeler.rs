@@ -33,6 +33,6 @@ impl Labeler {
     }
 
     pub fn resolve_label(&self, label: Label) -> Option<u64> {
-        self.label_values.get(&label).map(|it| *it)
+        self.label_values.get(&label).copied()
     }
 }
