@@ -1,3 +1,5 @@
+#![allow(clippy::inline_always)]
+
 use std::io::{self, Seek, SeekFrom, Write};
 
 use std::collections::HashMap;
@@ -74,29 +76,28 @@ where
     /// # panics
     /// If the label isn't contained in this assembler.
     pub fn write_label(&mut self, label: Label) -> io::Result<()> {
-        // if the label hasn't been resolved yet we should make sure that we can resolve it when `finish` is called.
-        match self.labeler.resolve_label(label) {
-            Some(label_value) => {
-                let value = label_value.wrapping_sub(self.current_offset());
-                self.write_qword(value)
-            }
+        let value = if let Some(label_value) = self.labeler.resolve_label(label) {
+            label_value.wrapping_sub(self.current_offset())
+        } else {
+            // if the label hasn't been resolved yet we should make sure that we can resolve it when `finish` is called.
+            // todo: should we panic if there's already a label here?
+            self.unresolved_labels.insert(self.current_offset(), label);
+            // temporarily write UD2 x 4 just in case this somehow gets executed as code.
+            // (Even though this is a relative address)
+            0x0f0b_0f0b_0f0b_0f0b
+        };
 
-            None => {
-                // todo: should we panic if there's already a label here?
-                self.unresolved_labels.insert(self.current_offset(), label);
-                // temporarily write UD2 x 4 just in case this somehow gets executed as code.
-                // (Even though this is a relative address)
-                self.write_qword(0x0f0b0f0b0f0b0f0b)
-            }
-        }
+        self.write_qword(value)
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn start_offset(&self) -> u64 {
         self.emitter.start_offset()
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn current_offset(&self) -> u64 {
         self.emitter.current_offset()
     }
