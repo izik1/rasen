@@ -6,6 +6,7 @@ use std::collections::HashMap;
 
 mod emitter;
 mod labeler;
+pub mod params;
 
 // This is for an x86 assembler for now, TODO: move into a specific module for x86?
 
@@ -121,6 +122,21 @@ where
     pub fn write_qword(&mut self, qword: u64) -> io::Result<()> {
         self.emitter.write_qword(qword)
     }
+
+    #[inline(always)]
+    pub(crate) fn write_immediate(&mut self, imm: WritableImmediate) -> io::Result<()> {
+        match imm {
+            WritableImmediate::W8(byte) => self.write_byte(byte),
+            WritableImmediate::W16(word) => self.write_word(word),
+            WritableImmediate::W32(dword) => self.write_dword(dword),
+        }
+    }
+}
+
+pub enum WritableImmediate {
+    W8(u8),
+    W16(u16),
+    W32(u32),
 }
 
 #[cfg(test)]
