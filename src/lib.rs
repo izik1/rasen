@@ -5,6 +5,7 @@ use std::io::{self, Seek, SeekFrom, Write};
 use std::collections::HashMap;
 
 mod emitter;
+pub mod fns;
 mod labeler;
 pub mod params;
 
