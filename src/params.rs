@@ -369,8 +369,6 @@ impl Mem {
     }
 
     pub(crate) fn sib(&self) -> SIB {
-        let scale = self.scale as u8;
-
         let index = self.index.map_or(SIB::NO_INDEX, |index| {
             // in release mode we just fall back to doing what X86 would do here... `none`
             // which is the same thing as when `index == None`.
