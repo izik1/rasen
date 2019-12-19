@@ -1,4 +1,4 @@
-use crate::params::{W8, W16, W32, W64, Register};
+use crate::params::{Register, W16, W32, W64, W8};
 
 pub enum Displacement {
     Disp8(i8),
@@ -165,7 +165,11 @@ impl Mem {
 
     /// # Errors
     /// When [`index`] is [`Register::Zsp`], as Zsp can't be used as an index.
-    pub fn zbp_index_scale_displacement(index: Register, scale: Scale, displacement: i32) -> Result<Self, ()> {
+    pub fn zbp_index_scale_displacement(
+        index: Register,
+        scale: Scale,
+        displacement: i32,
+    ) -> Result<Self, ()> {
         if index == Register::Zsp {
             Err(())
         } else {
@@ -197,8 +201,12 @@ impl Mem {
     }
 
     /// # Errors
-     /// When [`index`] is [`Register::Zsp`], as Zsp can't be used as an index.
-    pub fn with_index_scale_displacement(index: Register, scale: Scale, displacement: i32) -> Result<Self, ()> {
+    /// When [`index`] is [`Register::Zsp`], as Zsp can't be used as an index.
+    pub fn with_index_scale_displacement(
+        index: Register,
+        scale: Scale,
+        displacement: i32,
+    ) -> Result<Self, ()> {
         if index == Register::Zsp {
             Err(())
         } else {
@@ -252,13 +260,14 @@ impl Mem {
         match self.base {
             Some(base) => {
                 // x86-64 encodes what would be [Zbp] pr [R13] as rip relative in this form, so we have to do [Zbp + 0].
-                let mod_bits = if self.displacement == 0 && base != Register::Zbp && base != Register::R13 {
-                    0b00
-                } else if self.displacement <= 0xff {
-                    0b01
-                } else {
-                    0b10
-                };
+                let mod_bits =
+                    if self.displacement == 0 && base != Register::Zbp && base != Register::R13 {
+                        0b00
+                    } else if self.displacement <= 0xff {
+                        0b01
+                    } else {
+                        0b10
+                    };
 
                 // x86-64 encodes what would be [Zsp] or [R12] as a sib byte, so we need to use one.
                 let base = if base == Register::Zsp || base == Register::R12 || self.has_index {
@@ -284,9 +293,7 @@ impl Mem {
             (index as u8) % 8
         });
 
-        let base = self.base.map_or(SIB::NO_BASE, |base| {
-            (base as u8) % 8
-        });
+        let base = self.base.map_or(SIB::NO_BASE, |base| (base as u8) % 8);
 
         SIB::new(self.scale as u8, index, base)
     }
@@ -315,7 +322,6 @@ impl Memory<W64> for Mem {}
 
 macro_rules! mem {
     ($mem:ident, $width:ident) => {
-
         /// A wrapper for [`Mem`] That only implements [`Memory<$width>`], to make it more usable as a type param.
         pub struct $mem(pub Mem);
 
@@ -326,7 +332,7 @@ macro_rules! mem {
         }
 
         impl Memory<$width> for $mem {}
-    }
+    };
 }
 
 mem!(Mem8, W8);
