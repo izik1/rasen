@@ -19,16 +19,14 @@ struct Op {
     name: String,
     op8: u8,
     op: u8,
-    rm: String,
-    op16_prefix: u8,
+    rm: Option<u8>,
 }
 
 #[derive(Debug, serde_derive::Serialize, serde_derive::Deserialize)]
 struct WidthAtLeast16Op {
     name: String,
     op: u8,
-    rm: String,
-    op16_prefix: u8,
+    rm: Option<u8>,
 }
 
 #[derive(Debug, serde_derive::Serialize, serde_derive::Deserialize)]
@@ -53,21 +51,21 @@ fn write_op_reg_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_reg_imm<Width: WWidth, R: GeneralRegister<Width>>(&mut self, reg: R, imm: impl Immediate<Width>) -> io::Result<()> {{
         self.op_reg_imm(reg, imm, {op8:#02x?}, {op:#02x?}, {rm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm.unwrap()).unwrap();
 }
 
 fn write_op_mem_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_mem_imm<Width: WWidth, M: Memory<Width>>(&mut self, mem: M, imm: impl Immediate<Width>) -> io::Result<()> {{
         self.op_mem_imm(mem, imm, {op8:#02x?}, {op:#02x?}, {rm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm.unwrap()).unwrap();
 }
 
 fn write_op_reg_sximm8(f: &mut File, op: WidthAtLeast16Op) {
     writeln!(f, r#"    pub fn {name}_reg_sximm8<Width: WidthAtLeast16, R: GeneralRegister<Width>>(&mut self, reg: R, imm: i8) -> io::Result<()> {{
         self.op_reg_sximm8(reg, {op:#02x?}, {rm}, imm)
     }}
-"#, name=op.name, op=op.op, rm=op.rm).unwrap();
+"#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
 }
 
 fn write_ops(f: &mut File) {
@@ -76,18 +74,15 @@ fn write_ops(f: &mut File) {
     let ops: Ops = serde_json::from_reader(File::open(Op::path()).unwrap()).unwrap();
 
     for op in ops.zax_imm {
-        assert_eq!(op.op16_prefix, 0x66);
         write_op_zax_imm(f, op);
     }
 
     for op in ops.rm_imm {
-        assert_eq!(op.op16_prefix, 0x66);
         write_op_reg_imm(f, op.clone());
         write_op_mem_imm(f, op);
     }
 
     for op in ops.rm_sximm8 {
-        assert_eq!(op.op16_prefix, 0x66);
         write_op_reg_sximm8(f, op);
     }
 

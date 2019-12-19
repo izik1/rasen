@@ -4,64 +4,55 @@
       "name": "adc",
       "op8": 20,
       "op": 21,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "add",
       "op8": 4,
       "op": 5,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "and",
       "op8": 36,
       "op": 37,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "cmp",
       "op8": 60,
       "op": 61,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "or",
       "op8": 12,
       "op": 13,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "sbb",
       "op8": 28,
       "op": 29,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "sub",
       "op8": 44,
       "op": 45,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "test",
       "op8": 168,
       "op": 169,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     },
     {
       "name": "xor",
       "op8": 52,
       "op": 53,
-      "rm": "",
-      "op16_prefix": 102
+      "rm": null
     }
   ],
   "rm_imm": [
@@ -69,164 +60,140 @@
       "name": "adc",
       "op8": 128,
       "op": 129,
-      "rm": "2",
-      "op16_prefix": 102
+      "rm": 2
     },
     {
       "name": "add",
       "op8": 128,
       "op": 129,
-      "rm": "0",
-      "op16_prefix": 102
+      "rm": 0
     },
     {
       "name": "cmp",
       "op8": 128,
       "op": 129,
-      "rm": "7",
-      "op16_prefix": 102
+      "rm": 7
     },
     {
       "name": "mov",
       "op8": 198,
       "op": 199,
-      "rm": "0",
-      "op16_prefix": 102
+      "rm": 0
     },
     {
       "name": "or",
       "op8": 128,
       "op": 129,
-      "rm": "1",
-      "op16_prefix": 102
+      "rm": 1
     },
     {
       "name": "rcl",
       "op8": 192,
       "op": 193,
-      "rm": "2",
-      "op16_prefix": 102
+      "rm": 2
     },
     {
       "name": "rcr",
       "op8": 192,
       "op": 193,
-      "rm": "3",
-      "op16_prefix": 102
+      "rm": 3
     },
     {
       "name": "rol",
       "op8": 192,
       "op": 193,
-      "rm": "0",
-      "op16_prefix": 102
+      "rm": 0
     },
     {
       "name": "ror",
       "op8": 192,
       "op": 193,
-      "rm": "1",
-      "op16_prefix": 102
+      "rm": 1
     },
     {
       "name": "sal",
       "op8": 192,
       "op": 193,
-      "rm": "4",
-      "op16_prefix": 102
+      "rm": 4
     },
     {
       "name": "sar",
       "op8": 192,
       "op": 193,
-      "rm": "7",
-      "op16_prefix": 102
+      "rm": 7
     },
     {
       "name": "sbb",
       "op8": 128,
       "op": 129,
-      "rm": "3",
-      "op16_prefix": 102
+      "rm": 3
     },
     {
       "name": "shl",
       "op8": 192,
       "op": 193,
-      "rm": "4",
-      "op16_prefix": 102
+      "rm": 4
     },
     {
       "name": "shr",
       "op8": 192,
       "op": 193,
-      "rm": "5",
-      "op16_prefix": 102
+      "rm": 5
     },
     {
       "name": "sub",
       "op8": 128,
       "op": 129,
-      "rm": "5",
-      "op16_prefix": 102
+      "rm": 5
     },
     {
       "name": "test",
       "op8": 246,
       "op": 247,
-      "rm": "0",
-      "op16_prefix": 102
+      "rm": 0
     },
     {
       "name": "xor",
       "op8": 128,
       "op": 129,
-      "rm": "6",
-      "op16_prefix": 102
+      "rm": 6
     }
   ],
   "rm_sximm8": [
     {
       "name": "adc",
       "op": 131,
-      "rm": "2",
-      "op16_prefix": 102
+      "rm": 2
     },
     {
       "name": "add",
       "op": 131,
-      "rm": "0",
-      "op16_prefix": 102
+      "rm": 0
     },
     {
       "name": "cmp",
       "op": 131,
-      "rm": "7",
-      "op16_prefix": 102
+      "rm": 7
     },
     {
       "name": "or",
       "op": 131,
-      "rm": "1",
-      "op16_prefix": 102
+      "rm": 1
     },
     {
       "name": "sbb",
       "op": 131,
-      "rm": "3",
-      "op16_prefix": 102
+      "rm": 3
     },
     {
       "name": "sub",
       "op": 131,
-      "rm": "5",
-      "op16_prefix": 102
+      "rm": 5
     },
     {
       "name": "xor",
       "op": 131,
-      "rm": "6",
-      "op16_prefix": 102
+      "rm": 6
     }
   ]
 }
