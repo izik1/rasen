@@ -1,4 +1,4 @@
-use crate::params::{GeneralRegister, Immediate, WWidth, WidthAtLeast16, Mem};
+use crate::params::{GeneralRegister, Immediate, WWidth, WidthAtLeast16, mem::{Memory, ModRM}};
 use crate::Assembler;
 use std::io;
 

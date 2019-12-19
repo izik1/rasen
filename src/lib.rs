@@ -13,7 +13,7 @@ pub mod params;
 
 use emitter::Emitter;
 use labeler::Labeler;
-use crate::params::{ModRM, SIB, Displacement};
+use crate::params::mem::{ModRM, SIB, Displacement};
 
 #[derive(Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Label(usize);
