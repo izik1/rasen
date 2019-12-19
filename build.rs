@@ -116,7 +116,8 @@ fn write_op_reg_imm(f: &mut File, op: Op) {
 }
 
 fn write_op_mem_imm(f: &mut File, op: Op) {
-    writeln!(f, r#"    pub fn {name}_mem_imm<Width: WWidth>(&mut self, mem: Mem, imm: impl Immediate<Width>) -> io::Result<()> {{
+    writeln!(f, r#"    pub fn {name}_mem_imm<Width: WWidth, M: Memory<Width>>(&mut self, mem: M, imm: impl Immediate<Width>) -> io::Result<()> {{
+        let mem = mem.into();
         if Width::IS_W16 {{
             self.write_byte({op_16_prefix:#02x?})?;
         }}
@@ -171,19 +172,13 @@ fn write_op_reg_sximm8(f: &mut File, op: WidthAtLeast16Op) {
             rex_byte |= 0b0100_1000;
         }}
 
-        let opcode: u8 = {op:#02x?};
-
         if rex_byte != 0x00 {{
             self.write_byte(rex_byte)?;
         }}
 
-        self.write_byte(opcode)?;
+        self.write_byte({op:#02x?})?;
 
-        const MOD_RM_REG: u8 = 0b1100_0000;
-        let mod_rm_opcode = {rm} << 3;
-        let mod_rm = MOD_RM_REG | mod_rm_opcode | (reg.value() % 8);
-
-        self.write_byte(mod_rm)?;
+        self.write_mod_rm(ModRM::new(0b11, {rm}, reg.value() % 8))?;
 
         self.write_byte(imm as u8)
     }}
