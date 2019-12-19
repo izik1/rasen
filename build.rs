@@ -14,7 +14,7 @@ trait Opcode {
     }
 }
 
-#[derive(Debug, serde_derive::Serialize, serde_derive::Deserialize, Clone)]
+#[derive(Debug, serde_derive::Deserialize, Clone)]
 struct Op {
     name: String,
     op8: u8,
@@ -22,14 +22,14 @@ struct Op {
     rm: Option<u8>,
 }
 
-#[derive(Debug, serde_derive::Serialize, serde_derive::Deserialize, Clone)]
+#[derive(Debug, serde_derive::Deserialize, Clone)]
 struct WidthAtLeast16Op {
     name: String,
     op: u8,
     rm: Option<u8>,
 }
 
-#[derive(Debug, serde_derive::Serialize, serde_derive::Deserialize)]
+#[derive(Debug, serde_derive::Deserialize)]
 struct Ops {
     zax_imm: Vec<Op>,
     rm_imm: Vec<Op>,

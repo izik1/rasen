@@ -112,6 +112,7 @@ pub struct Mem {
     scale: Scale,
     has_index: bool,
     relative: bool,
+    force_32x: bool,
 }
 
 impl Mem {
@@ -126,6 +127,7 @@ impl Mem {
             scale: Scale::X1,
             has_index: false,
             relative: false,
+            force_32x: false,
         }
     }
 
@@ -141,6 +143,7 @@ impl Mem {
             scale: Scale::X1,
             has_index: false,
             relative: false,
+            force_32x: false,
         }
     }
 
@@ -163,6 +166,7 @@ impl Mem {
                 scale,
                 has_index: true,
                 relative: false,
+                force_32x: false,
             })
         }
     }
@@ -184,6 +188,7 @@ impl Mem {
                 scale,
                 has_index: true,
                 relative: false,
+                force_32x: false,
             })
         }
     }
@@ -221,6 +226,7 @@ impl Mem {
                 scale,
                 has_index: true,
                 relative: false,
+                force_32x: false,
             })
         }
     }
@@ -237,6 +243,23 @@ impl Mem {
             scale: Scale::X1,
             has_index: false,
             relative: true,
+            force_32x: false,
+        }
+    }
+
+    /// Forces the registers used as addresses to be the 32 bit versions instead of the 64 bit versions.
+    pub fn x32(self) -> Self {
+        Self {
+            force_32x: true,
+            ..self
+        }
+    }
+
+    pub(crate) fn address_prefix(&self) -> Option<u8> {
+        if self.force_32x {
+            Some(0x67)
+        } else {
+            None
         }
     }
 

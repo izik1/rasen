@@ -44,6 +44,11 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         imm: i8,
     ) -> io::Result<()> {
         let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
         let (mod_rm, sib, displacement) = mem.encoded();
 
         self.op_rm_imm::<Width>(
@@ -104,6 +109,11 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         rm_bits: u8,
     ) -> io::Result<()> {
         let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
         let (mod_rm, sib, displacement) = mem.encoded();
 
         self.op_rm_imm::<Width>(
@@ -167,6 +177,11 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         }
 
         let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
         let mut rex = mem.rex_byte();
 
         if reg.needs_rex() {
@@ -207,8 +222,6 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
     }
 
     // xor_hi8_imm(Hi8Bit, u8)
-    // xor_mem_reg<Width>(Mem<Width>, Register<Width>)
     // xor_mem_hi8(Mem<W8>, Hi8Bit)
-    // xor_reg_mem<Width>(Register<Width>, Mem<Width>)
     // xor_hi8_mem(Hi8Bit, Mem<W8>)
 }
