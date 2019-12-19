@@ -44,145 +44,30 @@ impl Opcode for Op {
 
 fn write_op_zax_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_zax_imm<Width: WWidth>(&mut self, imm: impl Immediate<Width>) -> io::Result<()> {{
-        if Width::IS_W16 {{
-            self.write_byte({op_16_prefix:#02x?})?;
-        }}
-
-        let mut rex_byte = 0_u8;
-
-        if Width::HAS_REXW {{
-            rex_byte |= 0b0100_1000;
-        }}
-
-        let opcode: u8 = if Width::IS_W8 {{
-            {op8:#02x?}
-        }} else {{
-            {op:#02x?}
-        }};
-
-        if rex_byte != 0x00 {{
-            self.write_byte(rex_byte)?;
-        }}
-
-        self.write_byte(opcode)?;
-
-        self.write_immediate(imm.as_writable())
+        self.op_zax_imm(imm, {op8:#02x?}, {op:#02x?})
     }}
-"#, name=op.name, op_16_prefix=op.op16_prefix, op=op.op, op8=op.op8).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8).unwrap();
 }
 
 fn write_op_reg_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_reg_imm<Width: WWidth, R: GeneralRegister<Width>>(&mut self, reg: R, imm: impl Immediate<Width>) -> io::Result<()> {{
-        if Width::IS_W16 {{
-            self.write_byte({op_16_prefix:#02x?})?;
-        }}
-
-        let mut rex_byte = 0_u8;
-        if reg.needs_rexb() {{
-            rex_byte |= 0b0100_0001;
-        }}
-
-        if Width::HAS_REXW {{
-            rex_byte |= 0b0100_1000;
-        }}
-
-        // SPL, BPL, SIL, DIL are the registers that this matters for.
-        if Width::IS_W8 && reg.value() >= 4 {{
-            // SPL, BPL, SIL, DIL
-            rex_byte |= 0b0100_0000;
-        }}
-
-        let opcode: u8 = if Width::IS_W8 {{
-            {op8:#02x?}
-        }} else {{
-            {op:#02x?}
-        }};
-
-        if rex_byte != 0x00 {{
-            self.write_byte(rex_byte)?;
-        }}
-
-        self.write_byte(opcode)?;
-
-        const MOD_RM_REG: u8 = 0b1100_0000;
-        let mod_rm_opcode = {rm} << 3;
-        let mod_rm = MOD_RM_REG | mod_rm_opcode | (reg.value() % 8);
-
-        self.write_byte(mod_rm)?;
-
-        self.write_immediate(imm.as_writable())
+        self.op_reg_imm(reg, imm, {op8:#02x?}, {op:#02x?}, {rm})
     }}
-"#, name=op.name, op_16_prefix=op.op16_prefix, op=op.op, op8=op.op8, rm=op.rm).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm).unwrap();
 }
 
 fn write_op_mem_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_mem_imm<Width: WWidth, M: Memory<Width>>(&mut self, mem: M, imm: impl Immediate<Width>) -> io::Result<()> {{
-        let mem = mem.into();
-        if Width::IS_W16 {{
-            self.write_byte({op_16_prefix:#02x?})?;
-        }}
-
-        let mut rex_byte = mem.rex_byte();
-
-        if Width::HAS_REXW {{
-            rex_byte |= 0b0100_1000;
-        }}
-
-        if rex_byte != 0x00 {{
-            self.write_byte(rex_byte)?;
-        }}
-
-        let opcode: u8 = if Width::IS_W8 {{
-            {op8:#02x?}
-        }} else {{
-            {op:#02x?}
-        }};
-
-        self.write_byte(opcode)?;
-
-        let (mod_rm, sib, displacement) = mem.encoded();
-
-        self.write_mod_rm(mod_rm.with_op({rm}))?;
-
-        if let Some(sib) = sib {{
-            self.write_sib(sib)?;
-        }}
-
-        if let Some(displacement) = displacement {{
-            self.write_displacement(displacement)?;
-        }}
-
-        self.write_immediate(imm.as_writable())
+        self.op_mem_imm(mem, imm, {op8:#02x?}, {op:#02x?}, {rm})
     }}
-"#, name=op.name, op_16_prefix=op.op16_prefix, op=op.op, op8=op.op8, rm=op.rm).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm).unwrap();
 }
 
 fn write_op_reg_sximm8(f: &mut File, op: WidthAtLeast16Op) {
     writeln!(f, r#"    pub fn {name}_reg_sximm8<Width: WidthAtLeast16, R: GeneralRegister<Width>>(&mut self, reg: R, imm: i8) -> io::Result<()> {{
-        if Width::IS_W16 {{
-            self.write_byte({op_16_prefix:#02x?})?;
-        }}
-
-        let mut rex_byte = 0_u8;
-        if reg.needs_rexb() {{
-            rex_byte |= 0b0100_0001;
-        }}
-
-        if Width::HAS_REXW {{
-            rex_byte |= 0b0100_1000;
-        }}
-
-        if rex_byte != 0x00 {{
-            self.write_byte(rex_byte)?;
-        }}
-
-        self.write_byte({op:#02x?})?;
-
-        self.write_mod_rm(ModRM::new(0b11, {rm}, reg.value() % 8))?;
-
-        self.write_byte(imm as u8)
+        self.op_reg_sximm8(reg, {op:#02x?}, {rm}, imm)
     }}
-"#, name=op.name, op_16_prefix=op.op16_prefix, op=op.op, rm=op.rm).unwrap();
+"#, name=op.name, op=op.op, rm=op.rm).unwrap();
 }
 
 fn write_ops(f: &mut File) {
@@ -190,17 +75,19 @@ fn write_ops(f: &mut File) {
 
     let ops: Ops = serde_json::from_reader(File::open(Op::path()).unwrap()).unwrap();
 
-    for op in ops.zax_imm
-    {
+    for op in ops.zax_imm {
+        assert_eq!(op.op16_prefix, 0x66);
         write_op_zax_imm(f, op);
     }
 
     for op in ops.rm_imm {
+        assert_eq!(op.op16_prefix, 0x66);
         write_op_reg_imm(f, op.clone());
         write_op_mem_imm(f, op);
     }
 
     for op in ops.rm_sximm8 {
+        assert_eq!(op.op16_prefix, 0x66);
         write_op_reg_sximm8(f, op);
     }
 
