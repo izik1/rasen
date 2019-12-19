@@ -65,7 +65,7 @@ pub enum Register {
 
 pub trait GeneralRegister<Width> {
     fn value(&self) -> u8;
-    fn needs_rexb(&self) -> bool {
+    fn needs_rex(&self) -> bool {
         self.value() >= 8
     }
 }

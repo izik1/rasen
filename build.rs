@@ -22,7 +22,7 @@ struct Op {
     rm: Option<u8>,
 }
 
-#[derive(Debug, serde_derive::Serialize, serde_derive::Deserialize)]
+#[derive(Debug, serde_derive::Serialize, serde_derive::Deserialize, Clone)]
 struct WidthAtLeast16Op {
     name: String,
     op: u8,
@@ -34,6 +34,8 @@ struct Ops {
     zax_imm: Vec<Op>,
     rm_imm: Vec<Op>,
     rm_sximm8: Vec<WidthAtLeast16Op>,
+    reg_mem: Vec<Op>,
+    mem_reg: Vec<Op>,
 }
 
 impl Opcode for Op {
@@ -68,6 +70,20 @@ fn write_op_reg_sximm8(f: &mut File, op: WidthAtLeast16Op) {
 "#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
 }
 
+fn write_op_mem_sximm8(f: &mut File, op: WidthAtLeast16Op) {
+    writeln!(f, r#"    pub fn {name}_mem_sximm8<Width: WidthAtLeast16, M: Memory<Width>>(&mut self, mem: M, imm: i8) -> io::Result<()> {{
+        self.op_mem_sximm8(mem, {op:#02x?}, {rm}, imm)
+    }}
+"#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
+}
+
+fn write_op_rm_mr(f: &mut File, op: Op, group: &str) {
+    writeln!(f, r#"    pub fn {name}_{group}<Width: WWidth, R, M>(&mut self, reg: R, mem: M) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<M> {{
+        self.op_rm_mr(reg, mem, {op8:#02x?}, {op:#02x?})
+    }}
+"#, name=op.name, op=op.op, op8=op.op8, group=group).unwrap();
+}
+
 fn write_ops(f: &mut File) {
     writeln!(f, "impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {{").unwrap();
 
@@ -83,7 +99,16 @@ fn write_ops(f: &mut File) {
     }
 
     for op in ops.rm_sximm8 {
-        write_op_reg_sximm8(f, op);
+        write_op_reg_sximm8(f, op.clone());
+        write_op_mem_sximm8(f, op);
+    }
+
+    for op in ops.reg_mem {
+        write_op_rm_mr(f, op, "reg_mem");
+    }
+
+    for op in ops.mem_reg {
+        write_op_rm_mr(f, op, "mem_reg");
     }
 
     writeln!(f, "}}").unwrap();

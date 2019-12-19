@@ -195,5 +195,141 @@
       "op": 131,
       "rm": 6
     }
+  ],
+  "reg_mem": [
+    {
+      "name": "adc",
+      "op8": 18,
+      "op": 19,
+      "rm": null
+    },
+    {
+      "name": "add",
+      "op8": 2,
+      "op": 3,
+      "rm": null
+    },
+    {
+      "name": "and",
+      "op8": 34,
+      "op": 35,
+      "rm": null
+    },
+    {
+      "name": "cmp",
+      "op8": 58,
+      "op": 59,
+      "rm": null
+    },
+    {
+      "name": "mov",
+      "op8": 138,
+      "op": 139,
+      "rm": null
+    },
+    {
+      "name": "or",
+      "op8": 10,
+      "op": 11,
+      "rm": null
+    },
+    {
+      "name": "sbb",
+      "op8": 26,
+      "op": 27,
+      "rm": null
+    },
+    {
+      "name": "sub",
+      "op8": 42,
+      "op": 43,
+      "rm": null
+    },
+    {
+      "name": "xchg",
+      "op8": 134,
+      "op": 135,
+      "rm": null
+    },
+    {
+      "name": "xor",
+      "op8": 50,
+      "op": 51,
+      "rm": null
+    }
+  ],
+  "mem_reg": [
+    {
+      "name": "adc",
+      "op8": 16,
+      "op": 17,
+      "rm": null
+    },
+    {
+      "name": "add",
+      "op8": 0,
+      "op": 1,
+      "rm": null
+    },
+    {
+      "name": "and",
+      "op8": 32,
+      "op": 33,
+      "rm": null
+    },
+    {
+      "name": "cmp",
+      "op8": 56,
+      "op": 57,
+      "rm": null
+    },
+    {
+      "name": "mov",
+      "op8": 136,
+      "op": 137,
+      "rm": null
+    },
+    {
+      "name": "or",
+      "op8": 8,
+      "op": 9,
+      "rm": null
+    },
+    {
+      "name": "sbb",
+      "op8": 24,
+      "op": 25,
+      "rm": null
+    },
+    {
+      "name": "sub",
+      "op8": 40,
+      "op": 41,
+      "rm": null
+    },
+    {
+      "name": "test",
+      "op8": 132,
+      "op": 133,
+      "rm": null
+    },
+    {
+      "name": "xadd",
+      "op8": 192,
+      "op": 193,
+      "rm": null
+    },
+    {
+      "name": "xchg",
+      "op8": 134,
+      "op": 135,
+      "rm": null
+    },
+    {
+      "name": "xor",
+      "op8": 48,
+      "op": 49,
+      "rm": null
+    }
   ]
 }

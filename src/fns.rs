@@ -3,7 +3,7 @@ use crate::params::{
     mem::{Memory, ModRM},
     GeneralRegister, Immediate, WWidth, WidthAtLeast16,
 };
-use crate::{Assembler, WritableImmediate};
+use crate::{Assembler, WritableImmediate, REXB, REXW, REXR};
 use std::io;
 
 include!(concat!(env!("OUT_DIR"), "/fns.rs"));
@@ -20,8 +20,8 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         rm_bits: u8,
         imm: i8,
     ) -> io::Result<()> {
-        let initial_rex = if reg.needs_rexb() {
-            0b0100_0001
+        let initial_rex = if reg.needs_rex() {
+            REXB
         } else {
             0b0000_0000
         };
@@ -33,6 +33,26 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             opcode,
             opcode,
             initial_rex,
+        )
+    }
+
+    fn op_mem_sximm8<Width: WidthAtLeast16, M: Memory<Width>>(
+        &mut self,
+        mem: M,
+        opcode: u8,
+        rm_bits: u8,
+        imm: i8,
+    ) -> io::Result<()> {
+        let mem = mem.into();
+        let (mod_rm, sib, displacement) = mem.encoded();
+
+        self.op_rm_imm::<Width>(
+            (mod_rm.with_op(rm_bits), sib, displacement),
+            WritableImmediate::W8(imm as u8),
+            // this is unused, since Width >= 16, but we have to put _something_ there.
+            opcode,
+            opcode,
+            mem.rex_byte(),
         )
     }
 
@@ -51,7 +71,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         let mut rex_byte = initial_rex;
 
         if Width::HAS_REXW {
-            rex_byte |= 0b0100_1000;
+            rex_byte |= REXW;
         }
 
         if rex_byte != 0x00 {
@@ -103,7 +123,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op: u8,
         rm_bits: u8,
     ) -> io::Result<()> {
-        let mut initial_rex = if reg.needs_rexb() { 0b0100_0001 } else { 0 };
+        let mut initial_rex = if reg.needs_rex() { 0b0100_0001 } else { 0 };
 
         // SPL, BPL, SIL, DIL are the registers that this matters for.
         if Width::IS_W8 && reg.value() >= 4 {
@@ -131,7 +151,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         }
 
         if Width::HAS_REXW {
-            self.write_byte(0b0100_1000)?;
+            self.write_byte(REXW)?;
         }
 
         let opcode: u8 = if Width::IS_W8 { op8 } else { op };
@@ -141,8 +161,52 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         self.write_immediate(imm.as_writable())
     }
 
+    fn op_rm_mr<Width: WWidth, R, M>(&mut self, reg: R, mem: M, op8: u8, op: u8) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<M> {
+        if Width::IS_W16 {
+            self.write_byte(0x66)?;
+        }
+
+        let mem = mem.into();
+        let mut rex = mem.rex_byte();
+
+        if reg.needs_rex() {
+            rex |= REXR;
+        }
+
+        // SPL, BPL, SIL, DIL are the registers that this matters for.
+        if Width::IS_W8 && reg.value() >= 4 {
+            // SPL, BPL, SIL, DIL
+            rex |= 0b0100_0000;
+        }
+
+        if Width::HAS_REXW {
+            rex |= REXW;
+        }
+
+        if rex != 0 {
+            self.write_byte(rex)?;
+        }
+
+        let opcode: u8 = if Width::IS_W8 { op8 } else { op };
+
+        self.write_byte(opcode)?;
+
+        let (mod_rm, sib, displacement) = mem.encoded();
+
+        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+
+        if let Some(sib) = sib {
+            self.write_sib(sib)?;
+        }
+
+        if let Some(displacement) = displacement {
+            self.write_displacement(displacement)?;
+        }
+
+        Ok(())
+    }
+
     // xor_hi8_imm(Hi8Bit, u8)
-    // xor_mem_sximm8<Width>(Mem<Width>, i8)
     // xor_mem_reg<Width>(Mem<Width>, Register<Width>)
     // xor_mem_hi8(Mem<W8>, Hi8Bit)
     // xor_reg_mem<Width>(Register<Width>, Mem<Width>)

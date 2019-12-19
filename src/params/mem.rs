@@ -30,6 +30,10 @@ impl ModRM {
         Self::new(self.r#mod(), op, self.rm())
     }
 
+    pub fn with_reg(self, reg: u8) -> Self {
+        Self::new(self.r#mod(), reg, self.rm())
+    }
+
     pub fn r#mod(self) -> u8 {
         self.0 >> 6
     }

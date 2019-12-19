@@ -152,6 +152,20 @@ where
     }
 }
 
+/// extends MODRM.rm SIB.base
+const REXB: u8 = 0b0100_0001;
+
+/// extends SIB.index
+#[allow(dead_code)]
+const REXX: u8 = 0b0100_0010;
+
+/// extends MODRM.reg
+#[allow(dead_code)]
+const REXR: u8 = 0b0100_0100;
+
+/// forces 64 bit operand width
+const REXW: u8 = 0b0100_1000;
+
 pub enum WritableImmediate {
     W8(u8),
     W16(u16),
