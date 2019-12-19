@@ -20,7 +20,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         rm_bits: u8,
         imm: i8,
     ) -> io::Result<()> {
-        let mut initial_rex = if reg.needs_rexb() {
+        let initial_rex = if reg.needs_rexb() {
             0b0100_0001
         } else {
             0b0000_0000

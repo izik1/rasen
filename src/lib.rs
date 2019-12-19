@@ -11,9 +11,9 @@ pub mod params;
 
 // This is for an x86 assembler for now, TODO: move into a specific module for x86?
 
+use crate::params::mem::{Displacement, ModRM, SIB};
 use emitter::Emitter;
 use labeler::Labeler;
-use crate::params::mem::{ModRM, SIB, Displacement};
 
 #[derive(Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Label(usize);
