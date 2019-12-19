@@ -13,6 +13,7 @@ pub mod params;
 
 use emitter::Emitter;
 use labeler::Labeler;
+use crate::params::{ModRM, SIB, Displacement};
 
 #[derive(Eq, PartialEq, Hash, Copy, Clone)]
 pub struct Label(usize);
@@ -107,6 +108,23 @@ where
     #[inline(always)]
     pub fn write_byte(&mut self, byte: u8) -> io::Result<()> {
         self.emitter.write_byte(byte)
+    }
+
+    #[inline(always)]
+    pub(crate) fn write_mod_rm(&mut self, mod_rm: ModRM) -> io::Result<()> {
+        self.emitter.write_byte(mod_rm.into())
+    }
+
+    #[inline(always)]
+    pub(crate) fn write_sib(&mut self, sib: SIB) -> io::Result<()> {
+        self.emitter.write_byte(sib.into())
+    }
+
+    pub(crate) fn write_displacement(&mut self, displacement: Displacement) -> io::Result<()> {
+        match displacement {
+            Displacement::Disp8(v) => self.write_byte(v as u8),
+            Displacement::Disp32(v) => self.write_dword(v as u32),
+        }
     }
 
     #[inline(always)]
