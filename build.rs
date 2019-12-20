@@ -17,9 +17,12 @@ trait Opcode {
 #[derive(Debug, serde_derive::Deserialize, Clone)]
 struct Op {
     name: String,
-    op8: u8,
+    op8: Option<u8>,
     op: u8,
     rm: Option<u8>,
+    mm: Option<u8>,
+    min: u8,
+    max: u8,
 }
 
 #[derive(Debug, serde_derive::Deserialize, Clone)]
@@ -46,21 +49,21 @@ fn write_op_zax_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_zax_imm<Width: WWidth>(&mut self, imm: impl Immediate<Width>) -> io::Result<()> {{
         self.op_zax_imm(imm, {op8:#02x?}, {op:#02x?})
     }}
-"#, name=op.name, op=op.op, op8=op.op8).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op)).unwrap();
 }
 
 fn write_op_reg_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_reg_imm<Width: WWidth, R: GeneralRegister<Width>>(&mut self, reg: R, imm: impl Immediate<Width>) -> io::Result<()> {{
         self.op_reg_imm(reg, imm, {op8:#02x?}, {op:#02x?}, {rm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm.unwrap()).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm.unwrap()).unwrap();
 }
 
 fn write_op_mem_imm(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_mem_imm<Width: WWidth, M: Memory<Width>>(&mut self, mem: M, imm: impl Immediate<Width>) -> io::Result<()> {{
         self.op_mem_imm(mem, imm, {op8:#02x?}, {op:#02x?}, {rm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8, rm=op.rm.unwrap()).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm.unwrap()).unwrap();
 }
 
 fn write_op_reg_sximm8(f: &mut File, op: WidthAtLeast16Op) {
@@ -78,10 +81,23 @@ fn write_op_mem_sximm8(f: &mut File, op: WidthAtLeast16Op) {
 }
 
 fn write_op_rm_mr(f: &mut File, op: Op, group: &str) {
-    writeln!(f, r#"    pub fn {name}_{group}<Width: WWidth, R, M>(&mut self, reg: R, mem: M) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<M> {{
-        self.op_rm_mr(reg, mem, {op8:#02x?}, {op:#02x?})
+    let width_bound = match (op.min > 8, op.max < 64) {
+        (true, true) => format!("WidthAtLeast{} + WidthAtMost{}", op.min, op.max),
+        (true, false) => format!("WidthAtLeast{}", op.min),
+        (false, true) => format!("WidthAtMost{}", op.max),
+        (false, false) => "WWidth".to_owned(),
+    };
+
+    let mm = if let Some(mm) = op.mm {
+        format!("Some({:#02x?})", mm)
+    } else {
+        "None".to_owned()
+    };
+
+    writeln!(f, r#"    pub fn {name}_{group}<Width: {width_bound}, R, M>(&mut self, reg: R, mem: M) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<Width> {{
+        self.op_rm_mr(reg, mem, {op8:#02x?}, {op:#02x?}, {mm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8, group=group).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), group=group, width_bound=width_bound, mm=mm).unwrap();
 }
 
 fn write_ops(f: &mut File) {

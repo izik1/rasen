@@ -1,9 +1,9 @@
 use crate::params::mem::{Displacement, SIB};
 use crate::params::{
     mem::{Memory, ModRM},
-    GeneralRegister, Immediate, WWidth, WidthAtLeast16,
+    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32,
 };
-use crate::{Assembler, WritableImmediate, REXB, REXW, REXR};
+use crate::{Assembler, WritableImmediate, REXB, REXR, REXW};
 use std::io;
 
 include!(concat!(env!("OUT_DIR"), "/fns.rs"));
@@ -20,11 +20,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         rm_bits: u8,
         imm: i8,
     ) -> io::Result<()> {
-        let initial_rex = if reg.needs_rex() {
-            REXB
-        } else {
-            0b0000_0000
-        };
+        let initial_rex = if reg.needs_rex() { REXB } else { 0b0000_0000 };
 
         self.op_rm_imm::<Width>(
             (ModRM::new(0b11, rm_bits, reg.value() % 8), None, None),
@@ -171,7 +167,18 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         self.write_immediate(imm.as_writable())
     }
 
-    fn op_rm_mr<Width: WWidth, R, M>(&mut self, reg: R, mem: M, op8: u8, op: u8) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<M> {
+    fn op_rm_mr<Width: WWidth, R, M>(
+        &mut self,
+        reg: R,
+        mem: M,
+        op8: u8,
+        op: u8,
+        prefix: Option<u8>,
+    ) -> io::Result<()>
+    where
+        R: GeneralRegister<Width>,
+        M: Memory<Width>,
+    {
         if Width::IS_W16 {
             self.write_byte(0x66)?;
         }
@@ -200,6 +207,10 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         if rex != 0 {
             self.write_byte(rex)?;
+        }
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
         }
 
         let opcode: u8 = if Width::IS_W8 { op8 } else { op };

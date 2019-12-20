@@ -2,333 +2,867 @@
   "zax_imm": [
     {
       "name": "adc",
+      "max": 64,
+      "min": 8,
       "op8": 20,
       "op": 21,
+      "mm": null,
       "rm": null
     },
     {
       "name": "add",
+      "max": 64,
+      "min": 8,
       "op8": 4,
       "op": 5,
+      "mm": null,
       "rm": null
     },
     {
       "name": "and",
+      "max": 64,
+      "min": 8,
       "op8": 36,
       "op": 37,
+      "mm": null,
       "rm": null
     },
     {
       "name": "cmp",
+      "max": 64,
+      "min": 8,
       "op8": 60,
       "op": 61,
+      "mm": null,
       "rm": null
     },
     {
       "name": "or",
+      "max": 64,
+      "min": 8,
       "op8": 12,
       "op": 13,
+      "mm": null,
       "rm": null
     },
     {
       "name": "sbb",
+      "max": 64,
+      "min": 8,
       "op8": 28,
       "op": 29,
+      "mm": null,
       "rm": null
     },
     {
       "name": "sub",
+      "max": 64,
+      "min": 8,
       "op8": 44,
       "op": 45,
+      "mm": null,
       "rm": null
     },
     {
       "name": "test",
+      "max": 64,
+      "min": 8,
       "op8": 168,
       "op": 169,
+      "mm": null,
       "rm": null
     },
     {
       "name": "xor",
+      "max": 64,
+      "min": 8,
       "op8": 52,
       "op": 53,
+      "mm": null,
       "rm": null
     }
   ],
   "rm_imm": [
     {
       "name": "adc",
+      "max": 64,
+      "min": 8,
       "op8": 128,
       "op": 129,
+      "mm": null,
       "rm": 2
     },
     {
       "name": "add",
+      "max": 64,
+      "min": 8,
       "op8": 128,
       "op": 129,
+      "mm": null,
       "rm": 0
     },
     {
       "name": "cmp",
+      "max": 64,
+      "min": 8,
       "op8": 128,
       "op": 129,
+      "mm": null,
       "rm": 7
     },
     {
       "name": "mov",
+      "max": 64,
+      "min": 8,
       "op8": 198,
       "op": 199,
+      "mm": null,
       "rm": 0
     },
     {
       "name": "or",
+      "max": 64,
+      "min": 8,
       "op8": 128,
       "op": 129,
+      "mm": null,
       "rm": 1
     },
     {
       "name": "rcl",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 2
     },
     {
       "name": "rcr",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 3
     },
     {
       "name": "rol",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 0
     },
     {
       "name": "ror",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 1
     },
     {
       "name": "sal",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 4
     },
     {
       "name": "sar",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 7
     },
     {
       "name": "sbb",
+      "max": 64,
+      "min": 8,
       "op8": 128,
       "op": 129,
+      "mm": null,
       "rm": 3
     },
     {
       "name": "shl",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 4
     },
     {
       "name": "shr",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": null,
       "rm": 5
     },
     {
       "name": "sub",
+      "max": 64,
+      "min": 8,
       "op8": 128,
       "op": 129,
+      "mm": null,
       "rm": 5
     },
     {
       "name": "test",
+      "max": 64,
+      "min": 8,
       "op8": 246,
       "op": 247,
+      "mm": null,
       "rm": 0
     },
     {
       "name": "xor",
+      "max": 64,
+      "min": 8,
       "op8": 128,
       "op": 129,
+      "mm": null,
       "rm": 6
     }
   ],
   "rm_sximm8": [
     {
       "name": "adc",
+      "max": 64,
+      "min": 16,
       "op": 131,
+      "mm": null,
       "rm": 2
     },
     {
       "name": "add",
+      "max": 64,
+      "min": 16,
       "op": 131,
+      "mm": null,
       "rm": 0
     },
     {
       "name": "cmp",
+      "max": 64,
+      "min": 16,
       "op": 131,
+      "mm": null,
       "rm": 7
     },
     {
       "name": "or",
+      "max": 64,
+      "min": 16,
       "op": 131,
+      "mm": null,
       "rm": 1
     },
     {
       "name": "sbb",
+      "max": 64,
+      "min": 16,
       "op": 131,
+      "mm": null,
       "rm": 3
     },
     {
       "name": "sub",
+      "max": 64,
+      "min": 16,
       "op": 131,
+      "mm": null,
       "rm": 5
     },
     {
       "name": "xor",
+      "max": 64,
+      "min": 16,
       "op": 131,
+      "mm": null,
       "rm": 6
     }
   ],
   "reg_mem": [
     {
       "name": "adc",
+      "max": 64,
+      "min": 8,
       "op8": 18,
       "op": 19,
+      "mm": null,
       "rm": null
     },
     {
       "name": "add",
+      "max": 64,
+      "min": 8,
       "op8": 2,
       "op": 3,
+      "mm": null,
       "rm": null
     },
     {
       "name": "and",
+      "max": 64,
+      "min": 8,
       "op8": 34,
       "op": 35,
+      "mm": null,
+      "rm": null
+    },
+    {
+      "name": "bsf",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 188,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "bsr",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 189,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmova",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 71,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovae",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 67,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovb",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 66,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovbe",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 70,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovc",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 66,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmove",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 68,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovg",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 79,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovge",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 77,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovl",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 76,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovle",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 78,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovna",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 70,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnae",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 66,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnb",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 67,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnbe",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 71,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnc",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 67,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovne",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 69,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovng",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 78,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnge",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 76,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnl",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 77,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnle",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 79,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovno",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 65,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnp",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 75,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovns",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 73,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovnz",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 69,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovo",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 64,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovp",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 74,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovpe",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 74,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovpo",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 75,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovs",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 72,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "cmovz",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 68,
+      "mm": 15,
       "rm": null
     },
     {
       "name": "cmp",
+      "max": 64,
+      "min": 8,
       "op8": 58,
       "op": 59,
+      "mm": null,
+      "rm": null
+    },
+    {
+      "name": "imul",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 175,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "lar",
+      "max": 32,
+      "min": 16,
+      "op8": null,
+      "op": 2,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "lea",
+      "max": 64,
+      "min": 32,
+      "op8": null,
+      "op": 141,
+      "mm": null,
+      "rm": null
+    },
+    {
+      "name": "lsl",
+      "max": 32,
+      "min": 16,
+      "op8": null,
+      "op": 3,
+      "mm": 15,
       "rm": null
     },
     {
       "name": "mov",
+      "max": 64,
+      "min": 8,
       "op8": 138,
       "op": 139,
+      "mm": null,
       "rm": null
     },
     {
       "name": "or",
+      "max": 64,
+      "min": 8,
       "op8": 10,
       "op": 11,
+      "mm": null,
       "rm": null
     },
     {
       "name": "sbb",
+      "max": 64,
+      "min": 8,
       "op8": 26,
       "op": 27,
+      "mm": null,
       "rm": null
     },
     {
       "name": "sub",
+      "max": 64,
+      "min": 8,
       "op8": 42,
       "op": 43,
+      "mm": null,
       "rm": null
     },
     {
       "name": "xchg",
+      "max": 64,
+      "min": 8,
       "op8": 134,
       "op": 135,
+      "mm": null,
       "rm": null
     },
     {
       "name": "xor",
+      "max": 64,
+      "min": 8,
       "op8": 50,
       "op": 51,
+      "mm": null,
       "rm": null
     }
   ],
   "mem_reg": [
     {
       "name": "adc",
+      "max": 64,
+      "min": 8,
       "op8": 16,
       "op": 17,
+      "mm": null,
       "rm": null
     },
     {
       "name": "add",
+      "max": 64,
+      "min": 8,
       "op8": 0,
       "op": 1,
+      "mm": null,
       "rm": null
     },
     {
       "name": "and",
+      "max": 64,
+      "min": 8,
       "op8": 32,
       "op": 33,
+      "mm": null,
+      "rm": null
+    },
+    {
+      "name": "bt",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 163,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "btc",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 187,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "btr",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 179,
+      "mm": 15,
+      "rm": null
+    },
+    {
+      "name": "bts",
+      "max": 64,
+      "min": 16,
+      "op8": null,
+      "op": 171,
+      "mm": 15,
       "rm": null
     },
     {
       "name": "cmp",
+      "max": 64,
+      "min": 8,
       "op8": 56,
       "op": 57,
+      "mm": null,
       "rm": null
     },
     {
       "name": "mov",
+      "max": 64,
+      "min": 8,
       "op8": 136,
       "op": 137,
+      "mm": null,
+      "rm": null
+    },
+    {
+      "name": "movnti",
+      "max": 64,
+      "min": 32,
+      "op8": null,
+      "op": 195,
+      "mm": 15,
       "rm": null
     },
     {
       "name": "or",
+      "max": 64,
+      "min": 8,
       "op8": 8,
       "op": 9,
+      "mm": null,
       "rm": null
     },
     {
       "name": "sbb",
+      "max": 64,
+      "min": 8,
       "op8": 24,
       "op": 25,
+      "mm": null,
       "rm": null
     },
     {
       "name": "sub",
+      "max": 64,
+      "min": 8,
       "op8": 40,
       "op": 41,
+      "mm": null,
       "rm": null
     },
     {
       "name": "test",
+      "max": 64,
+      "min": 8,
       "op8": 132,
       "op": 133,
+      "mm": null,
       "rm": null
     },
     {
       "name": "xadd",
+      "max": 64,
+      "min": 8,
       "op8": 192,
       "op": 193,
+      "mm": 15,
       "rm": null
     },
     {
       "name": "xchg",
+      "max": 64,
+      "min": 8,
       "op8": 134,
       "op": 135,
+      "mm": null,
       "rm": null
     },
     {
       "name": "xor",
+      "max": 64,
+      "min": 8,
       "op8": 48,
       "op": 49,
+      "mm": null,
       "rm": null
     }
   ]
