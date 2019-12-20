@@ -2,253 +2,253 @@
   "zax_imm": [
     {
       "name": "adc",
-      "max": 64,
       "min": 8,
-      "op8": 20,
-      "op": 21
+      "max": 64,
+      "op": 21,
+      "op8": 20
     },
     {
       "name": "add",
-      "max": 64,
       "min": 8,
-      "op8": 4,
-      "op": 5
+      "max": 64,
+      "op": 5,
+      "op8": 4
     },
     {
       "name": "and",
-      "max": 64,
       "min": 8,
-      "op8": 36,
-      "op": 37
+      "max": 64,
+      "op": 37,
+      "op8": 36
     },
     {
       "name": "cmp",
-      "max": 64,
       "min": 8,
-      "op8": 60,
-      "op": 61
+      "max": 64,
+      "op": 61,
+      "op8": 60
     },
     {
       "name": "or",
-      "max": 64,
       "min": 8,
-      "op8": 12,
-      "op": 13
+      "max": 64,
+      "op": 13,
+      "op8": 12
     },
     {
       "name": "sbb",
-      "max": 64,
       "min": 8,
-      "op8": 28,
-      "op": 29
+      "max": 64,
+      "op": 29,
+      "op8": 28
     },
     {
       "name": "sub",
-      "max": 64,
       "min": 8,
-      "op8": 44,
-      "op": 45
+      "max": 64,
+      "op": 45,
+      "op8": 44
     },
     {
       "name": "test",
-      "max": 64,
       "min": 8,
-      "op8": 168,
-      "op": 169
+      "max": 64,
+      "op": 169,
+      "op8": 168
     },
     {
       "name": "xor",
-      "max": 64,
       "min": 8,
-      "op8": 52,
-      "op": 53
+      "max": 64,
+      "op": 53,
+      "op8": 52
     }
   ],
   "rm_imm": [
     {
       "name": "adc",
-      "max": 64,
       "min": 8,
-      "op8": 128,
+      "max": 64,
       "op": 129,
+      "op8": 128,
       "rm": 2
     },
     {
       "name": "add",
-      "max": 64,
       "min": 8,
-      "op8": 128,
+      "max": 64,
       "op": 129,
+      "op8": 128,
       "rm": 0
     },
     {
       "name": "cmp",
-      "max": 64,
       "min": 8,
-      "op8": 128,
+      "max": 64,
       "op": 129,
+      "op8": 128,
       "rm": 7
     },
     {
       "name": "mov",
-      "max": 64,
       "min": 8,
-      "op8": 198,
+      "max": 64,
       "op": 199,
+      "op8": 198,
       "rm": 0
     },
     {
       "name": "or",
-      "max": 64,
       "min": 8,
-      "op8": 128,
+      "max": 64,
       "op": 129,
+      "op8": 128,
       "rm": 1
     },
     {
       "name": "rcl",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 2
     },
     {
       "name": "rcr",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 3
     },
     {
       "name": "rol",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 0
     },
     {
       "name": "ror",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 1
     },
     {
       "name": "sal",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 4
     },
     {
       "name": "sar",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 7
     },
     {
       "name": "sbb",
-      "max": 64,
       "min": 8,
-      "op8": 128,
+      "max": 64,
       "op": 129,
+      "op8": 128,
       "rm": 3
     },
     {
       "name": "shl",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 4
     },
     {
       "name": "shr",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
       "op": 193,
+      "op8": 192,
       "rm": 5
     },
     {
       "name": "sub",
-      "max": 64,
       "min": 8,
-      "op8": 128,
+      "max": 64,
       "op": 129,
+      "op8": 128,
       "rm": 5
     },
     {
       "name": "test",
-      "max": 64,
       "min": 8,
-      "op8": 246,
+      "max": 64,
       "op": 247,
+      "op8": 246,
       "rm": 0
     },
     {
       "name": "xor",
-      "max": 64,
       "min": 8,
-      "op8": 128,
+      "max": 64,
       "op": 129,
+      "op8": 128,
       "rm": 6
     }
   ],
   "rm_sximm8": [
     {
       "name": "adc",
-      "max": 64,
       "min": 16,
+      "max": 64,
       "op": 131,
       "rm": 2
     },
     {
       "name": "add",
-      "max": 64,
       "min": 16,
+      "max": 64,
       "op": 131,
       "rm": 0
     },
     {
       "name": "cmp",
-      "max": 64,
       "min": 16,
+      "max": 64,
       "op": 131,
       "rm": 7
     },
     {
       "name": "or",
-      "max": 64,
       "min": 16,
+      "max": 64,
       "op": 131,
       "rm": 1
     },
     {
       "name": "sbb",
-      "max": 64,
       "min": 16,
+      "max": 64,
       "op": 131,
       "rm": 3
     },
     {
       "name": "sub",
-      "max": 64,
       "min": 16,
+      "max": 64,
       "op": 131,
       "rm": 5
     },
     {
       "name": "xor",
-      "max": 64,
       "min": 16,
+      "max": 64,
       "op": 131,
       "rm": 6
     }
@@ -256,446 +256,446 @@
   "reg_mem": [
     {
       "name": "adc",
-      "max": 64,
       "min": 8,
-      "op8": 18,
-      "op": 19
+      "max": 64,
+      "op": 19,
+      "op8": 18
     },
     {
       "name": "add",
-      "max": 64,
       "min": 8,
-      "op8": 2,
-      "op": 3
+      "max": 64,
+      "op": 3,
+      "op8": 2
     },
     {
       "name": "and",
-      "max": 64,
       "min": 8,
-      "op8": 34,
-      "op": 35
+      "max": 64,
+      "op": 35,
+      "op8": 34
     },
     {
       "name": "bsf",
-      "max": 64,
       "min": 16,
-      "op": 188,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 188
     },
     {
       "name": "bsr",
-      "max": 64,
       "min": 16,
-      "op": 189,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 189
     },
     {
       "name": "cmova",
-      "max": 64,
       "min": 16,
-      "op": 71,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 71
     },
     {
       "name": "cmovae",
-      "max": 64,
       "min": 16,
-      "op": 67,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 67
     },
     {
       "name": "cmovb",
-      "max": 64,
       "min": 16,
-      "op": 66,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 66
     },
     {
       "name": "cmovbe",
-      "max": 64,
       "min": 16,
-      "op": 70,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 70
     },
     {
       "name": "cmovc",
-      "max": 64,
       "min": 16,
-      "op": 66,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 66
     },
     {
       "name": "cmove",
-      "max": 64,
       "min": 16,
-      "op": 68,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 68
     },
     {
       "name": "cmovg",
-      "max": 64,
       "min": 16,
-      "op": 79,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 79
     },
     {
       "name": "cmovge",
-      "max": 64,
       "min": 16,
-      "op": 77,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 77
     },
     {
       "name": "cmovl",
-      "max": 64,
       "min": 16,
-      "op": 76,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 76
     },
     {
       "name": "cmovle",
-      "max": 64,
       "min": 16,
-      "op": 78,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 78
     },
     {
       "name": "cmovna",
-      "max": 64,
       "min": 16,
-      "op": 70,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 70
     },
     {
       "name": "cmovnae",
-      "max": 64,
       "min": 16,
-      "op": 66,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 66
     },
     {
       "name": "cmovnb",
-      "max": 64,
       "min": 16,
-      "op": 67,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 67
     },
     {
       "name": "cmovnbe",
-      "max": 64,
       "min": 16,
-      "op": 71,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 71
     },
     {
       "name": "cmovnc",
-      "max": 64,
       "min": 16,
-      "op": 67,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 67
     },
     {
       "name": "cmovne",
-      "max": 64,
       "min": 16,
-      "op": 69,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 69
     },
     {
       "name": "cmovng",
-      "max": 64,
       "min": 16,
-      "op": 78,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 78
     },
     {
       "name": "cmovnge",
-      "max": 64,
       "min": 16,
-      "op": 76,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 76
     },
     {
       "name": "cmovnl",
-      "max": 64,
       "min": 16,
-      "op": 77,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 77
     },
     {
       "name": "cmovnle",
-      "max": 64,
       "min": 16,
-      "op": 79,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 79
     },
     {
       "name": "cmovno",
-      "max": 64,
       "min": 16,
-      "op": 65,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 65
     },
     {
       "name": "cmovnp",
-      "max": 64,
       "min": 16,
-      "op": 75,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 75
     },
     {
       "name": "cmovns",
-      "max": 64,
       "min": 16,
-      "op": 73,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 73
     },
     {
       "name": "cmovnz",
-      "max": 64,
       "min": 16,
-      "op": 69,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 69
     },
     {
       "name": "cmovo",
-      "max": 64,
       "min": 16,
-      "op": 64,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 64
     },
     {
       "name": "cmovp",
-      "max": 64,
       "min": 16,
-      "op": 74,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 74
     },
     {
       "name": "cmovpe",
-      "max": 64,
       "min": 16,
-      "op": 74,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 74
     },
     {
       "name": "cmovpo",
-      "max": 64,
       "min": 16,
-      "op": 75,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 75
     },
     {
       "name": "cmovs",
-      "max": 64,
       "min": 16,
-      "op": 72,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 72
     },
     {
       "name": "cmovz",
-      "max": 64,
       "min": 16,
-      "op": 68,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 68
     },
     {
       "name": "cmp",
-      "max": 64,
       "min": 8,
-      "op8": 58,
-      "op": 59
+      "max": 64,
+      "op": 59,
+      "op8": 58
     },
     {
       "name": "imul",
-      "max": 64,
       "min": 16,
-      "op": 175,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 175
     },
     {
       "name": "lar",
-      "max": 32,
       "min": 16,
-      "op": 2,
-      "mm": 15
+      "max": 32,
+      "mm": 15,
+      "op": 2
     },
     {
       "name": "lea",
-      "max": 64,
       "min": 32,
+      "max": 64,
       "op": 141
     },
     {
       "name": "lsl",
-      "max": 32,
       "min": 16,
-      "op": 3,
-      "mm": 15
+      "max": 32,
+      "mm": 15,
+      "op": 3
     },
     {
       "name": "mov",
-      "max": 64,
       "min": 8,
-      "op8": 138,
-      "op": 139
+      "max": 64,
+      "op": 139,
+      "op8": 138
     },
     {
       "name": "or",
-      "max": 64,
       "min": 8,
-      "op8": 10,
-      "op": 11
+      "max": 64,
+      "op": 11,
+      "op8": 10
     },
     {
       "name": "sbb",
-      "max": 64,
       "min": 8,
-      "op8": 26,
-      "op": 27
+      "max": 64,
+      "op": 27,
+      "op8": 26
     },
     {
       "name": "sub",
-      "max": 64,
       "min": 8,
-      "op8": 42,
-      "op": 43
+      "max": 64,
+      "op": 43,
+      "op8": 42
     },
     {
       "name": "xchg",
-      "max": 64,
       "min": 8,
-      "op8": 134,
-      "op": 135
+      "max": 64,
+      "op": 135,
+      "op8": 134
     },
     {
       "name": "xor",
-      "max": 64,
       "min": 8,
-      "op8": 50,
-      "op": 51
+      "max": 64,
+      "op": 51,
+      "op8": 50
     }
   ],
   "mem_reg": [
     {
       "name": "adc",
-      "max": 64,
       "min": 8,
-      "op8": 16,
-      "op": 17
+      "max": 64,
+      "op": 17,
+      "op8": 16
     },
     {
       "name": "add",
-      "max": 64,
       "min": 8,
-      "op8": 0,
-      "op": 1
+      "max": 64,
+      "op": 1,
+      "op8": 0
     },
     {
       "name": "and",
-      "max": 64,
       "min": 8,
-      "op8": 32,
-      "op": 33
+      "max": 64,
+      "op": 33,
+      "op8": 32
     },
     {
       "name": "bt",
-      "max": 64,
       "min": 16,
-      "op": 163,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 163
     },
     {
       "name": "btc",
-      "max": 64,
       "min": 16,
-      "op": 187,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 187
     },
     {
       "name": "btr",
-      "max": 64,
       "min": 16,
-      "op": 179,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 179
     },
     {
       "name": "bts",
-      "max": 64,
       "min": 16,
-      "op": 171,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 171
     },
     {
       "name": "cmp",
-      "max": 64,
       "min": 8,
-      "op8": 56,
-      "op": 57
+      "max": 64,
+      "op": 57,
+      "op8": 56
     },
     {
       "name": "mov",
-      "max": 64,
       "min": 8,
-      "op8": 136,
-      "op": 137
+      "max": 64,
+      "op": 137,
+      "op8": 136
     },
     {
       "name": "movnti",
-      "max": 64,
       "min": 32,
-      "op": 195,
-      "mm": 15
+      "max": 64,
+      "mm": 15,
+      "op": 195
     },
     {
       "name": "or",
-      "max": 64,
       "min": 8,
-      "op8": 8,
-      "op": 9
+      "max": 64,
+      "op": 9,
+      "op8": 8
     },
     {
       "name": "sbb",
-      "max": 64,
       "min": 8,
-      "op8": 24,
-      "op": 25
+      "max": 64,
+      "op": 25,
+      "op8": 24
     },
     {
       "name": "sub",
-      "max": 64,
       "min": 8,
-      "op8": 40,
-      "op": 41
+      "max": 64,
+      "op": 41,
+      "op8": 40
     },
     {
       "name": "test",
-      "max": 64,
       "min": 8,
-      "op8": 132,
-      "op": 133
+      "max": 64,
+      "op": 133,
+      "op8": 132
     },
     {
       "name": "xadd",
-      "max": 64,
       "min": 8,
-      "op8": 192,
+      "max": 64,
+      "mm": 15,
       "op": 193,
-      "mm": 15
+      "op8": 192
     },
     {
       "name": "xchg",
-      "max": 64,
       "min": 8,
-      "op8": 134,
-      "op": 135
+      "max": 64,
+      "op": 135,
+      "op8": 134
     },
     {
       "name": "xor",
-      "max": 64,
       "min": 8,
-      "op8": 48,
-      "op": 49
+      "max": 64,
+      "op": 49,
+      "op8": 48
     }
   ]
 }

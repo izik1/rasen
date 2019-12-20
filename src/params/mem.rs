@@ -105,6 +105,7 @@ impl From<SIB> for u8 {
     }
 }
 
+#[derive(Clone)]
 pub struct Mem {
     base: Option<Register>,
     index: Option<Register>,
@@ -350,6 +351,7 @@ impl Memory<W64> for Mem {}
 macro_rules! mem {
     ($mem:ident, $width:ident) => {
         /// A wrapper for [`Mem`] That only implements [`Memory<$width>`], to make it more usable as a type param.
+        #[derive(Clone)]
         pub struct $mem(pub Mem);
 
         impl From<$mem> for Mem {
