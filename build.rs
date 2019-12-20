@@ -120,6 +120,14 @@ fn write_op_reg_mem(f: &mut File, op: Op) {
 "#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound, mm=mm).unwrap();
 }
 
+macro_rules! skip_name {
+    ($name:literal, $op:ident) => {
+        if $op.name == $name {
+            continue
+        }
+    }
+}
+
 fn write_ops(f: &mut File) {
     writeln!(f, "impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {{").unwrap();
 
