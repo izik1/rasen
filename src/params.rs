@@ -42,6 +42,17 @@ impl WidthAtLeast16 for W16 {}
 impl WidthAtLeast16 for W32 {}
 impl WidthAtLeast16 for W64 {}
 
+pub trait WidthAtLeast32: WWidth {}
+
+impl WidthAtLeast32 for W32 {}
+impl WidthAtLeast32 for W64 {}
+
+pub trait WidthAtMost32: WWidth {}
+
+impl WidthAtMost32 for W8 {}
+impl WidthAtMost32 for W16 {}
+impl WidthAtMost32 for W32 {}
+
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum Register {
