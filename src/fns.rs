@@ -20,10 +20,11 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         rm_bits: u8,
         imm: i8,
     ) -> io::Result<()> {
+        let reg = reg.into();
         let initial_rex = if reg.needs_rex() { REXB } else { 0b0000_0000 };
 
         self.op_rm_imm::<Width>(
-            (ModRM::new(0b11, rm_bits, reg.value() % 8), None, None),
+            (ModRM::new(0b11, rm_bits, reg.writable()), None, None),
             WritableImmediate::W8(imm as u8),
             // this is unused, since Width >= 16, but we have to put _something_ there.
             opcode,
@@ -129,6 +130,8 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op: u8,
         rm_bits: u8,
     ) -> io::Result<()> {
+        let reg = reg.into();
+
         let mut initial_rex = if reg.needs_rex() { 0b0100_0001 } else { 0 };
 
         // SPL, BPL, SIL, DIL are the registers that this matters for.
@@ -138,7 +141,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         }
 
         self.op_rm_imm::<Width>(
-            (ModRM::new(0b11, rm_bits, reg.value() % 8), None, None),
+            (ModRM::new(0b11, rm_bits, reg.writable()), None, None),
             imm.as_writable(),
             op8,
             op,
@@ -183,6 +186,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             self.write_byte(0x66)?;
         }
 
+        let reg = reg.into();
         let mem = mem.into();
 
         if let Some(prefix) = mem.address_prefix() {
@@ -219,7 +223,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let (mod_rm, sib, displacement) = mem.encoded();
 
-        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+        self.write_mod_rm(mod_rm.with_reg(reg.writable()))?;
 
         if let Some(sib) = sib {
             self.write_sib(sib)?;
@@ -251,6 +255,9 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let mut rex = 0;
 
+        let reg1 = reg1.into();
+        let reg2 = reg2.into();
+
         if reg1.needs_rex() || reg2.needs_rex() {
             rex |= REXR;
         }
@@ -277,7 +284,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         self.write_byte(opcode)?;
 
-        let mod_rm = ModRM::new(0b11, reg1.value() % 8, reg2.value() % 8);
+        let mod_rm = ModRM::new(0b11, reg1.writable(), reg2.writable());
 
         self.write_mod_rm(mod_rm)?;
 
@@ -296,6 +303,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             self.write_byte(0x66)?;
         }
 
+        let reg = reg.into();
         let mem = mem.into();
 
         if let Some(prefix) = mem.address_prefix() {
@@ -326,7 +334,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let (mod_rm, sib, displacement) = mem.encoded();
 
-        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+        self.write_mod_rm(mod_rm.with_reg(reg.writable()))?;
 
         if let Some(sib) = sib {
             self.write_sib(sib)?;
@@ -347,6 +355,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         let op = 0xb7;
         let prefix = Some(0x0f);
 
+        let reg = reg.into();
         let mem = mem.into();
 
         if let Some(prefix) = mem.address_prefix() {
@@ -377,7 +386,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let (mod_rm, sib, displacement) = mem.encoded();
 
-        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+        self.write_mod_rm(mod_rm.with_reg(reg.writable()))?;
 
         if let Some(sib) = sib {
             self.write_sib(sib)?;
@@ -402,6 +411,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             self.write_byte(0x66)?;
         }
 
+        let reg = reg.into();
         let mem = mem.into();
 
         if let Some(prefix) = mem.address_prefix() {
@@ -432,7 +442,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let (mod_rm, sib, displacement) = mem.encoded();
 
-        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+        self.write_mod_rm(mod_rm.with_reg(reg.writable()))?;
 
         if let Some(sib) = sib {
             self.write_sib(sib)?;
@@ -453,6 +463,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         let op = 0xbe;
         let prefix = Some(0x0f);
 
+        let reg = reg.into();
         let mem = mem.into();
 
         if let Some(prefix) = mem.address_prefix() {
@@ -483,7 +494,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let (mod_rm, sib, displacement) = mem.encoded();
 
-        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+        self.write_mod_rm(mod_rm.with_reg(reg.writable()))?;
 
         if let Some(sib) = sib {
             self.write_sib(sib)?;

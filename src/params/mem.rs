@@ -42,6 +42,7 @@ impl ModRM {
         (self.0 >> 3) & 0b111
     }
 
+    #[allow(dead_code)]
     pub fn op(self) -> u8 {
         self.reg()
     }
@@ -79,10 +80,12 @@ impl SIB {
         Self((scale << 6) | ((index & 0b111) << 3) | (base & 0b111))
     }
 
+    #[allow(dead_code)]
     pub fn scale(self) -> u8 {
         self.0 >> 6
     }
 
+    #[allow(dead_code)]
     pub fn index(self) -> u8 {
         (self.0 >> 3) & 0b111
     }

@@ -79,36 +79,66 @@ pub enum Register {
     R15 = 15,
 }
 
-pub trait GeneralRegister<Width> {
-    fn value(&self) -> u8;
-    fn needs_rex(&self) -> bool {
+impl Register {
+    pub(crate) fn value(self) -> u8 {
+        self as u8
+    }
+
+    pub(crate) fn needs_rex(self) -> bool {
         self.value() >= 8
     }
-}
 
-impl GeneralRegister<W8> for Register {
-    fn value(&self) -> u8 {
-        *self as u8
+    pub(crate) fn writable(self) -> u8 {
+        self.value() & 0b111
     }
 }
 
-impl GeneralRegister<W16> for Register {
-    fn value(&self) -> u8 {
-        *self as u8
-    }
+pub trait GeneralRegister<Width>: Into<Register> {}
+
+impl GeneralRegister<W8> for Register {}
+impl GeneralRegister<W16> for Register {}
+impl GeneralRegister<W32> for Register {}
+impl GeneralRegister<W64> for Register {}
+
+macro_rules! reg {
+    ($reg:ident, $width:ident) => {
+        /// A wrapper for [`Register`] That only implements [`GeneralRegister<$width>`], to make it more usable as a type param.
+        #[derive(Copy, Clone)]
+        pub struct $reg(pub Register);
+
+        impl $reg {
+            pub const ZAX: Self = Self(Register::Zax);
+            pub const ZCX: Self = Self(Register::Zcx);
+            pub const ZDX: Self = Self(Register::Zdx);
+            pub const ZBX: Self = Self(Register::Zbx);
+            pub const ZSP: Self = Self(Register::Zsp);
+            pub const ZBP: Self = Self(Register::Zbp);
+            pub const ZSI: Self = Self(Register::Zsi);
+            pub const ZDI: Self = Self(Register::Zdi);
+            pub const R8: Self = Self(Register::R8);
+            pub const R9: Self = Self(Register::R9);
+            pub const R10: Self = Self(Register::R10);
+            pub const R11: Self = Self(Register::R11);
+            pub const R12: Self = Self(Register::R12);
+            pub const R13: Self = Self(Register::R13);
+            pub const R14: Self = Self(Register::R14);
+            pub const R15: Self = Self(Register::R15);
+        }
+
+        impl From<$reg> for Register {
+            fn from(other: $reg) -> Self {
+                other.0
+            }
+        }
+
+        impl GeneralRegister<$width> for $reg {}
+    };
 }
 
-impl GeneralRegister<W32> for Register {
-    fn value(&self) -> u8 {
-        *self as u8
-    }
-}
-
-impl GeneralRegister<W64> for Register {
-    fn value(&self) -> u8 {
-        *self as u8
-    }
-}
+reg!(Reg8, W8);
+reg!(Reg16, W16);
+reg!(Reg32, W32);
+reg!(Reg64, W64);
 
 pub struct Imm8(pub u8);
 
