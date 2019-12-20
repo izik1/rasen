@@ -2,6 +2,7 @@ use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::collections::HashSet;
 
 trait Opcode {
     const FILE_NAME: &'static str;
@@ -25,6 +26,16 @@ struct Op {
     max: u8,
 }
 
+impl Op {
+    fn mm(&self) -> String {
+        if let Some(mm) = self.mm {
+            format!("Some({:#02x?})", mm)
+        } else {
+            "None".to_owned()
+        }
+    }
+}
+
 #[derive(Debug, serde_derive::Deserialize, Clone)]
 struct WidthAtLeast16Op {
     name: String,
@@ -37,8 +48,8 @@ struct Ops {
     zax_imm: Vec<Op>,
     rm_imm: Vec<Op>,
     rm_sximm8: Vec<WidthAtLeast16Op>,
-    reg_mem: Vec<Op>,
-    mem_reg: Vec<Op>,
+    reg_rm: Vec<Op>,
+    rm_reg: Vec<Op>,
 }
 
 impl Opcode for Op {
@@ -80,52 +91,43 @@ fn write_op_mem_sximm8(f: &mut File, op: WidthAtLeast16Op) {
 "#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
 }
 
-fn write_op_mem_reg(f: &mut File, op: Op) {
-    let width_bound = match (op.min > 8, op.max < 64) {
+fn width_bound(op: &Op) -> String {
+    match (op.min > 8, op.max < 64) {
         (true, true) => format!("WidthAtLeast{} + WidthAtMost{}", op.min, op.max),
         (true, false) => format!("WidthAtLeast{}", op.min),
         (false, true) => format!("WidthAtMost{}", op.max),
         (false, false) => "WWidth".to_owned(),
-    };
+    }
+}
 
-    let mm = if let Some(mm) = op.mm {
-        format!("Some({:#02x?})", mm)
-    } else {
-        "None".to_owned()
-    };
-
+fn write_op_mem_reg(f: &mut File, op: Op) {
     writeln!(f, r#"    pub fn {name}_mem_reg<Width: {width_bound}, R, M>(&mut self, mem: M, reg: R) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<Width> {{
         self.op_rm_mr(reg, mem, {op8:#02x?}, {op:#02x?}, {mm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound, mm=mm).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound(&op), mm=op.mm()).unwrap();
 }
 
 fn write_op_reg_mem(f: &mut File, op: Op) {
-    let width_bound = match (op.min > 8, op.max < 64) {
-        (true, true) => format!("WidthAtLeast{} + WidthAtMost{}", op.min, op.max),
-        (true, false) => format!("WidthAtLeast{}", op.min),
-        (false, true) => format!("WidthAtMost{}", op.max),
-        (false, false) => "WWidth".to_owned(),
-    };
-
-    let mm = if let Some(mm) = op.mm {
-        format!("Some({:#02x?})", mm)
-    } else {
-        "None".to_owned()
-    };
-
     writeln!(f, r#"    pub fn {name}_reg_mem<Width: {width_bound}, R, M>(&mut self, reg: R, mem: M) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<Width> {{
         self.op_rm_mr(reg, mem, {op8:#02x?}, {op:#02x?}, {mm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound, mm=mm).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound(&op), mm=op.mm()).unwrap();
 }
 
+fn write_op_reg_reg(f: &mut File, op: Op) {
+    writeln!(f, r#"    pub fn {name}_reg_reg<Width: {width_bound}, R1, R2>(&mut self, reg1: R1, reg2: R2) -> io::Result<()> where R1: GeneralRegister<Width>, R2: GeneralRegister<Width> {{
+        self.op_reg_reg(reg1, reg2, {op8:#02x?}, {op:#02x?}, {mm})
+    }}
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound(&op), mm=op.mm()).unwrap();
+}
+
+#[allow(unused_macros)]
 macro_rules! skip_name {
     ($name:literal, $op:ident) => {
         if $op.name == $name {
-            continue
+            continue;
         }
-    }
+    };
 }
 
 fn write_ops(f: &mut File) {
@@ -147,12 +149,21 @@ fn write_ops(f: &mut File) {
         write_op_mem_sximm8(f, op);
     }
 
-    for op in ops.reg_mem {
-        write_op_reg_mem(f, op);
+    let mut reg_reg_ops = HashSet::new();
+
+    for op in ops.reg_rm {
+        write_op_reg_mem(f, op.clone());
+        reg_reg_ops.insert(op.name.clone());
+        write_op_reg_reg(f, op);
     }
 
-    for op in ops.mem_reg {
-        write_op_mem_reg(f, op);
+    for op in ops.rm_reg {
+        write_op_mem_reg(f, op.clone());
+
+        // todo: do this anyway, but with a suffix.
+        if reg_reg_ops.insert(op.name.clone()) {
+            write_op_reg_reg(f, op);
+        }
     }
 
     writeln!(f, "}}").unwrap();
