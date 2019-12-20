@@ -80,7 +80,7 @@ fn write_op_mem_sximm8(f: &mut File, op: WidthAtLeast16Op) {
 "#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
 }
 
-fn write_op_rm_mr(f: &mut File, op: Op, group: &str) {
+fn write_op_mem_reg(f: &mut File, op: Op) {
     let width_bound = match (op.min > 8, op.max < 64) {
         (true, true) => format!("WidthAtLeast{} + WidthAtMost{}", op.min, op.max),
         (true, false) => format!("WidthAtLeast{}", op.min),
@@ -94,10 +94,30 @@ fn write_op_rm_mr(f: &mut File, op: Op, group: &str) {
         "None".to_owned()
     };
 
-    writeln!(f, r#"    pub fn {name}_{group}<Width: {width_bound}, R, M>(&mut self, reg: R, mem: M) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<Width> {{
+    writeln!(f, r#"    pub fn {name}_mem_reg<Width: {width_bound}, R, M>(&mut self, mem: M, reg: R) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<Width> {{
         self.op_rm_mr(reg, mem, {op8:#02x?}, {op:#02x?}, {mm})
     }}
-"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), group=group, width_bound=width_bound, mm=mm).unwrap();
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound, mm=mm).unwrap();
+}
+
+fn write_op_reg_mem(f: &mut File, op: Op) {
+    let width_bound = match (op.min > 8, op.max < 64) {
+        (true, true) => format!("WidthAtLeast{} + WidthAtMost{}", op.min, op.max),
+        (true, false) => format!("WidthAtLeast{}", op.min),
+        (false, true) => format!("WidthAtMost{}", op.max),
+        (false, false) => "WWidth".to_owned(),
+    };
+
+    let mm = if let Some(mm) = op.mm {
+        format!("Some({:#02x?})", mm)
+    } else {
+        "None".to_owned()
+    };
+
+    writeln!(f, r#"    pub fn {name}_reg_mem<Width: {width_bound}, R, M>(&mut self, reg: R, mem: M) -> io::Result<()> where R: GeneralRegister<Width>, M: Memory<Width> {{
+        self.op_rm_mr(reg, mem, {op8:#02x?}, {op:#02x?}, {mm})
+    }}
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound, mm=mm).unwrap();
 }
 
 fn write_ops(f: &mut File) {
@@ -120,11 +140,11 @@ fn write_ops(f: &mut File) {
     }
 
     for op in ops.reg_mem {
-        write_op_rm_mr(f, op, "reg_mem");
+        write_op_reg_mem(f, op);
     }
 
     for op in ops.mem_reg {
-        write_op_rm_mr(f, op, "mem_reg");
+        write_op_mem_reg(f, op);
     }
 
     writeln!(f, "}}").unwrap();

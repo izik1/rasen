@@ -1,7 +1,7 @@
 use crate::params::mem::{Displacement, SIB};
 use crate::params::{
     mem::{Memory, ModRM},
-    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32,
+    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W8,
 };
 use crate::{Assembler, WritableImmediate, REXB, REXR, REXW};
 use std::io;
@@ -214,6 +214,218 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         }
 
         let opcode: u8 = if Width::IS_W8 { op8 } else { op };
+
+        self.write_byte(opcode)?;
+
+        let (mod_rm, sib, displacement) = mem.encoded();
+
+        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+
+        if let Some(sib) = sib {
+            self.write_sib(sib)?;
+        }
+
+        if let Some(displacement) = displacement {
+            self.write_displacement(displacement)?;
+        }
+
+        Ok(())
+    }
+
+    pub fn movzx_reg_mem8<Width: WidthAtLeast16, R: GeneralRegister<Width>, M: Memory<W8>>(
+        &mut self,
+        reg: R,
+        mem: M,
+    ) -> io::Result<()> {
+        let op = 0xb6;
+        let prefix = Some(0x0f);
+
+        if Width::IS_W16 {
+            self.write_byte(0x66)?;
+        }
+
+        let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
+        let mut rex = mem.rex_byte();
+
+        if reg.needs_rex() {
+            rex |= REXR;
+        }
+
+        if Width::HAS_REXW {
+            rex |= REXW;
+        }
+
+        if rex != 0 {
+            self.write_byte(rex)?;
+        }
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
+
+        let opcode: u8 = op;
+
+        self.write_byte(opcode)?;
+
+        let (mod_rm, sib, displacement) = mem.encoded();
+
+        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+
+        if let Some(sib) = sib {
+            self.write_sib(sib)?;
+        }
+
+        if let Some(displacement) = displacement {
+            self.write_displacement(displacement)?;
+        }
+
+        Ok(())
+    }
+
+    pub fn movzx_reg_mem16<Width: WidthAtLeast32, R: GeneralRegister<Width>, M: Memory<W16>>(
+        &mut self,
+        reg: R,
+        mem: M,
+    ) -> io::Result<()> {
+        let op = 0xb7;
+        let prefix = Some(0x0f);
+
+        let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
+        let mut rex = mem.rex_byte();
+
+        if reg.needs_rex() {
+            rex |= REXR;
+        }
+
+        if Width::HAS_REXW {
+            rex |= REXW;
+        }
+
+        if rex != 0 {
+            self.write_byte(rex)?;
+        }
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
+
+        let opcode: u8 = op;
+
+        self.write_byte(opcode)?;
+
+        let (mod_rm, sib, displacement) = mem.encoded();
+
+        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+
+        if let Some(sib) = sib {
+            self.write_sib(sib)?;
+        }
+
+        if let Some(displacement) = displacement {
+            self.write_displacement(displacement)?;
+        }
+
+        Ok(())
+    }
+
+    pub fn movsx_reg_mem8<Width: WidthAtLeast16, R: GeneralRegister<Width>, M: Memory<W8>>(
+        &mut self,
+        reg: R,
+        mem: M,
+    ) -> io::Result<()> {
+        let op = 0xbe;
+        let prefix = Some(0x0f);
+
+        if Width::IS_W16 {
+            self.write_byte(0x66)?;
+        }
+
+        let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
+        let mut rex = mem.rex_byte();
+
+        if reg.needs_rex() {
+            rex |= REXR;
+        }
+
+        if Width::HAS_REXW {
+            rex |= REXW;
+        }
+
+        if rex != 0 {
+            self.write_byte(rex)?;
+        }
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
+
+        let opcode: u8 = op;
+
+        self.write_byte(opcode)?;
+
+        let (mod_rm, sib, displacement) = mem.encoded();
+
+        self.write_mod_rm(mod_rm.with_reg(reg.value() % 8))?;
+
+        if let Some(sib) = sib {
+            self.write_sib(sib)?;
+        }
+
+        if let Some(displacement) = displacement {
+            self.write_displacement(displacement)?;
+        }
+
+        Ok(())
+    }
+
+    pub fn movsx_reg_mem16<Width: WidthAtLeast32, R: GeneralRegister<Width>, M: Memory<W16>>(
+        &mut self,
+        reg: R,
+        mem: M,
+    ) -> io::Result<()> {
+        let op = 0xbe;
+        let prefix = Some(0x0f);
+
+        let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
+        let mut rex = mem.rex_byte();
+
+        if reg.needs_rex() {
+            rex |= REXR;
+        }
+
+        if Width::HAS_REXW {
+            rex |= REXW;
+        }
+
+        if rex != 0 {
+            self.write_byte(rex)?;
+        }
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
+
+        let opcode: u8 = op;
 
         self.write_byte(opcode)?;
 
