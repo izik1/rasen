@@ -197,7 +197,7 @@
       "rm": 6
     }
   ],
-  "reg_mem": [
+  "reg_rm": [
     {
       "name": "adc",
       "min": 8,
@@ -520,7 +520,7 @@
       "op8": 50
     }
   ],
-  "mem_reg": [
+  "rm_reg": [
     {
       "name": "adc",
       "min": 8,

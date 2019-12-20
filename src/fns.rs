@@ -175,9 +175,9 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op: u8,
         prefix: Option<u8>,
     ) -> io::Result<()>
-    where
-        R: GeneralRegister<Width>,
-        M: Memory<Width>,
+        where
+            R: GeneralRegister<Width>,
+            M: Memory<Width>,
     {
         if Width::IS_W16 {
             self.write_byte(0x66)?;
@@ -228,6 +228,58 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         if let Some(displacement) = displacement {
             self.write_displacement(displacement)?;
         }
+
+        Ok(())
+    }
+
+    // note: reg1 gets written to reg and reg2 gets written to R/M
+    fn op_reg_reg<Width: WWidth, R1, R2>(
+        &mut self,
+        reg1: R1,
+        reg2: R2,
+        op8: u8,
+        op: u8,
+        prefix: Option<u8>,
+    ) -> io::Result<()>
+        where
+            R1: GeneralRegister<Width>,
+            R2: GeneralRegister<Width>,
+    {
+        if Width::IS_W16 {
+            self.write_byte(0x66)?;
+        }
+
+        let mut rex = 0;
+
+        if reg1.needs_rex() || reg2.needs_rex() {
+            rex |= REXR;
+        }
+
+        // SPL, BPL, SIL, DIL are the registers that this matters for.
+        if Width::IS_W8 && (reg1.value() >= 4 || reg2.value() >= 4) {
+            // SPL, BPL, SIL, DIL
+            rex |= 0b0100_0000;
+        }
+
+        if Width::HAS_REXW {
+            rex |= REXW;
+        }
+
+        if rex != 0 {
+            self.write_byte(rex)?;
+        }
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
+
+        let opcode: u8 = if Width::IS_W8 { op8 } else { op };
+
+        self.write_byte(opcode)?;
+
+        let mod_rm = ModRM::new(0b11, reg1.value() % 8, reg2.value() % 8);
+
+        self.write_mod_rm(mod_rm)?;
 
         Ok(())
     }
