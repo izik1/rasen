@@ -13,32 +13,34 @@ include!(concat!(env!("OUT_DIR"), "/fns.rs"));
 //  and `Width::IS_W8` doesn't prove (to the compiler anyway) that `Width == W8`
 
 impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
-    fn op_reg_sximm8<Width: WidthAtLeast16, R: GeneralRegister<Width>>(
+    fn op_reg_imm8<Width: WWidth, R: GeneralRegister<Width>>(
         &mut self,
         reg: R,
-        opcode: u8,
+        imm: u8,
+        op8: u8,
+        op: u8,
         rm_bits: u8,
-        imm: i8,
     ) -> io::Result<()> {
         let reg = reg.into();
         let initial_rex = if reg.needs_rex() { REXB } else { 0b0000_0000 };
 
         self.op_rm_imm::<Width>(
             (ModRM::new(0b11, rm_bits, reg.writable()), None, None),
-            WritableImmediate::W8(imm as u8),
+            WritableImmediate::W8(imm),
             // this is unused, since Width >= 16, but we have to put _something_ there.
-            opcode,
-            opcode,
+            op8,
+            op,
             initial_rex,
         )
     }
 
-    fn op_mem_sximm8<Width: WidthAtLeast16, M: Memory<Width>>(
+    fn op_mem_imm8<Width: WWidth, M: Memory<Width>>(
         &mut self,
         mem: M,
-        opcode: u8,
+        imm: u8,
+        op8: u8,
+        op: u8,
         rm_bits: u8,
-        imm: i8,
     ) -> io::Result<()> {
         let mem = mem.into();
 
@@ -50,10 +52,10 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         self.op_rm_imm::<Width>(
             (mod_rm.with_op(rm_bits), sib, displacement),
-            WritableImmediate::W8(imm as u8),
+            WritableImmediate::W8(imm),
             // this is unused, since Width >= 16, but we have to put _something_ there.
-            opcode,
-            opcode,
+            op8,
+            op,
             mem.rex_byte(),
         )
     }
