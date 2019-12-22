@@ -17,7 +17,7 @@ mod private {
 }
 
 pub trait WWidth: private::Sealed {
-    const HAS_REXW: bool = false;
+    const IS_W64: bool = false;
     const IS_W8: bool = false;
     const IS_W16: bool = false;
 }
@@ -33,7 +33,7 @@ impl WWidth for W16 {
 impl WWidth for W32 {}
 
 impl WWidth for W64 {
-    const HAS_REXW: bool = true;
+    const IS_W64: bool = true;
 }
 
 pub trait WidthAtLeast16: WWidth {}
