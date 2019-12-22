@@ -641,5 +641,174 @@
       "op": 49,
       "op8": 48
     }
+  ],
+  "no_operands": [
+    {
+      "name": "clc",
+      "op": 248
+    },
+    {
+      "name": "cld",
+      "op": 252
+    },
+    {
+      "name": "cli",
+      "op": 250
+    },
+    {
+      "name": "clts",
+      "mm": 15,
+      "op": 6
+    },
+    {
+      "name": "cmc",
+      "op": 245
+    },
+    {
+      "name": "emms",
+      "mm": 15,
+      "op": 119
+    },
+    {
+      "name": "femms",
+      "mm": 15,
+      "op": 14
+    },
+    {
+      "name": "fwait",
+      "op": 219
+    },
+    {
+      "name": "getsec",
+      "mm": 15,
+      "op": 55
+    },
+    {
+      "name": "hlt",
+      "op": 244
+    },
+    {
+      "name": "int3",
+      "op": 204
+    },
+    {
+      "name": "invd",
+      "mm": 15,
+      "op": 8
+    },
+    {
+      "name": "iret",
+      "op": 207
+    },
+    {
+      "name": "iretd",
+      "op": 207
+    },
+    {
+      "name": "iretq",
+      "op": 207
+    },
+    {
+      "name": "iretw",
+      "op": 207
+    },
+    {
+      "name": "leave",
+      "op": 201
+    },
+    {
+      "name": "nop",
+      "op": 144
+    },
+    {
+      "name": "popf",
+      "op": 157
+    },
+    {
+      "name": "popfq",
+      "op": 157
+    },
+    {
+      "name": "pushf",
+      "op": 156
+    },
+    {
+      "name": "pushfq",
+      "op": 156
+    },
+    {
+      "name": "ret",
+      "op": 195
+    },
+    {
+      "name": "stc",
+      "op": 249
+    },
+    {
+      "name": "std",
+      "op": 253
+    },
+    {
+      "name": "sti",
+      "op": 251
+    },
+    {
+      "name": "syscall",
+      "mm": 15,
+      "op": 5
+    },
+    {
+      "name": "sysenter",
+      "mm": 15,
+      "op": 52
+    },
+    {
+      "name": "sysexit",
+      "mm": 15,
+      "op": 53
+    },
+    {
+      "name": "sysexit64",
+      "mm": 15,
+      "op": 53
+    },
+    {
+      "name": "sysret",
+      "mm": 15,
+      "op": 7
+    },
+    {
+      "name": "sysret64",
+      "mm": 15,
+      "op": 7
+    },
+    {
+      "name": "ud2",
+      "mm": 15,
+      "op": 11
+    },
+    {
+      "name": "vzeroall",
+      "mm": 15,
+      "op": 119
+    },
+    {
+      "name": "vzeroupper",
+      "mm": 15,
+      "op": 119
+    },
+    {
+      "name": "wait",
+      "op": 219
+    },
+    {
+      "name": "wbinvd",
+      "mm": 15,
+      "op": 9
+    },
+    {
+      "name": "xlatb",
+      "op": 215
+    }
   ]
 }

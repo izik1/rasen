@@ -258,8 +258,12 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         let reg1 = reg1.into();
         let reg2 = reg2.into();
 
-        if reg1.needs_rex() || reg2.needs_rex() {
+        if reg1.needs_rex() {
             rex |= REXR;
+        }
+
+        if reg2.needs_rex() {
+            rex |= REXB;
         }
 
         // SPL, BPL, SIL, DIL are the registers that this matters for.
@@ -289,6 +293,14 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         self.write_mod_rm(mod_rm)?;
 
         Ok(())
+    }
+
+    fn op_no_operands(&mut self, opcode: u8, prefix: Option<u8>) -> io::Result<()> {
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
+
+        self.write_byte(opcode)
     }
 
     pub fn movzx_reg_mem8<Width: WidthAtLeast16, R: GeneralRegister<Width>, M: Memory<W8>>(
