@@ -37,19 +37,31 @@ impl Op {
 }
 
 #[derive(Debug, serde_derive::Deserialize, Clone)]
-struct WidthAtLeast16Op {
+struct SingleSizeOp {
     name: String,
     op: u8,
     rm: Option<u8>,
+    mm: Option<u8>,
+}
+
+impl SingleSizeOp {
+    fn mm(&self) -> String {
+        if let Some(mm) = self.mm {
+            format!("Some({:#02x?})", mm)
+        } else {
+            "None".to_owned()
+        }
+    }
 }
 
 #[derive(Debug, serde_derive::Deserialize)]
 struct Ops {
     zax_imm: Vec<Op>,
     rm_imm: Vec<Op>,
-    rm_sximm8: Vec<WidthAtLeast16Op>,
+    rm_sximm8: Vec<SingleSizeOp>,
     reg_rm: Vec<Op>,
     rm_reg: Vec<Op>,
+    no_operands: Vec<SingleSizeOp>,
 }
 
 impl Opcode for Op {
@@ -77,14 +89,14 @@ fn write_op_mem_imm(f: &mut File, op: Op) {
 "#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm.unwrap()).unwrap();
 }
 
-fn write_op_reg_sximm8(f: &mut File, op: WidthAtLeast16Op) {
+fn write_op_reg_sximm8(f: &mut File, op: SingleSizeOp) {
     writeln!(f, r#"    pub fn {name}_reg_sximm8<Width: WidthAtLeast16, R: GeneralRegister<Width>>(&mut self, reg: R, imm: i8) -> io::Result<()> {{
         self.op_reg_sximm8(reg, {op:#02x?}, {rm}, imm)
     }}
 "#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
 }
 
-fn write_op_mem_sximm8(f: &mut File, op: WidthAtLeast16Op) {
+fn write_op_mem_sximm8(f: &mut File, op: SingleSizeOp) {
     writeln!(f, r#"    pub fn {name}_mem_sximm8<Width: WidthAtLeast16, M: Memory<Width>>(&mut self, mem: M, imm: i8) -> io::Result<()> {{
         self.op_mem_sximm8(mem, {op:#02x?}, {rm}, imm)
     }}
@@ -119,6 +131,14 @@ fn write_op_reg_reg(f: &mut File, op: Op) {
         self.op_reg_reg(reg1, reg2, {op8:#02x?}, {op:#02x?}, {mm})
     }}
 "#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound(&op), mm=op.mm()).unwrap();
+}
+
+fn write_op_no_operand(f: &mut File, op: SingleSizeOp) {
+    assert_eq!(op.rm, None);
+    writeln!(f, r#"    pub fn {name}(&mut self) -> io::Result<()> {{
+        self.op_no_operands({op:#02x?}, {mm})
+    }}
+"#, name=op.name, op=op.op, mm=op.mm()).unwrap();
 }
 
 #[allow(unused_macros)]
@@ -164,6 +184,11 @@ fn write_ops(f: &mut File) {
         if reg_reg_ops.insert(op.name.clone()) {
             write_op_reg_reg(f, op);
         }
+    }
+
+
+    for op in ops.no_operands {
+        write_op_no_operand(f, op);
     }
 
     writeln!(f, "}}").unwrap();
