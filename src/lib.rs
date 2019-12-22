@@ -142,6 +142,12 @@ where
         self.emitter.write_qword(qword)
     }
 
+    pub(crate) fn write_vex(&mut self, vex: Vex) -> io::Result<()> {
+        self.emitter.write_byte(0xc4)?;
+        self.emitter.write_byte(vex.0)?;
+        self.emitter.write_byte(vex.1)
+    }
+
     #[inline(always)]
     pub(crate) fn write_immediate(&mut self, imm: WritableImmediate) -> io::Result<()> {
         match imm {
@@ -156,11 +162,9 @@ where
 const REXB: u8 = 0b0100_0001;
 
 /// extends SIB.index
-#[allow(dead_code)]
 const REXX: u8 = 0b0100_0010;
 
 /// extends MODRM.reg
-#[allow(dead_code)]
 const REXR: u8 = 0b0100_0100;
 
 /// forces 64 bit operand width
@@ -170,6 +174,23 @@ pub enum WritableImmediate {
     W8(u8),
     W16(u16),
     W32(u32),
+}
+
+#[derive(Copy, Clone)]
+struct Vex(u8, u8);
+
+impl Vex {
+    fn new(vvvv: u8, pp: u8, mm: u8, r: bool, x: bool, b: bool, w: bool) -> Self {
+        debug_assert!(vvvv <= 0b1111);
+        debug_assert!(pp <= 0b0011);
+        debug_assert!(mm <= 0b1_1111);
+
+        let l = false;
+        let b0 = ((r as u8) << 7) | ((x as u8) << 6) | ((b as u8) << 5) | (mm & 0b1_1111);
+        let b1 = ((w as u8) << 7) | ((vvvv & 0b1111) << 3) | ((l as u8) << 2) | (pp & 0b11);
+
+        Self(b0, b1)
+    }
 }
 
 #[cfg(test)]

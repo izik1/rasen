@@ -1,8 +1,8 @@
+use std::collections::HashSet;
 use std::env;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
-use std::collections::HashSet;
 
 trait Opcode {
     const FILE_NAME: &'static str;
@@ -54,6 +54,15 @@ impl SingleSizeOp {
     }
 }
 
+#[derive(Debug, serde_derive::Deserialize, Clone)]
+struct VexOp {
+    name: String,
+    op: u8,
+    rm: Option<u8>,
+    mm: u8,
+    pp: u8,
+}
+
 #[derive(Debug, serde_derive::Deserialize)]
 struct Ops {
     zax_imm: Vec<Op>,
@@ -63,6 +72,7 @@ struct Ops {
     reg_rm: Vec<Op>,
     rm_reg: Vec<Op>,
     no_operands: Vec<SingleSizeOp>,
+    reg_rm_reg: Vec<VexOp>,
 }
 
 impl Opcode for Op {
@@ -148,12 +158,37 @@ fn write_op_reg_reg(f: &mut File, op: Op) {
 "#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound(&op), mm=op.mm()).unwrap();
 }
 
+fn write_op_reg_mem_reg(f: &mut File, op: VexOp) {
+    writeln!(f, r#"    pub fn {name}_reg_mem_reg<Width: WidthAtLeast32, R1, M, R2>(&mut self, rd: R1, mem: M, rs: R2) -> io::Result<()>
+        where R1: GeneralRegister<Width>, M: Memory<Width>, R2: GeneralRegister<Width>
+    {{
+        self.op_reg_mem_reg(rd, mem, rs, {mm:#02x?}, {op:#02x?}, {pp:#02x?})
+    }}
+"#, name=op.name, op=op.op, mm=op.mm, pp=op.pp).unwrap();
+}
+
+fn write_op_reg_reg_reg(f: &mut File, op: VexOp) {
+    writeln!(f, r#"    pub fn {name}_reg_reg_reg<Width: WidthAtLeast32, RD, RS1, RS2>(&mut self, rd: RD, rs1: RS1, rs2: RS2) -> io::Result<()>
+        where RD: GeneralRegister<Width>, RS1: GeneralRegister<Width>, RS2: GeneralRegister<Width>
+    {{
+        self.op_reg_reg_reg(rd, rs1, rs2, {mm:#02x?}, {op:#02x?}, {pp:#02x?})
+    }}
+"#, name=op.name, op=op.op, mm=op.mm, pp=op.pp).unwrap();
+}
+
 fn write_op_no_operand(f: &mut File, op: SingleSizeOp) {
     assert_eq!(op.rm, None);
-    writeln!(f, r#"    pub fn {name}(&mut self) -> io::Result<()> {{
+    writeln!(
+        f,
+        r#"    pub fn {name}(&mut self) -> io::Result<()> {{
         self.op_no_operands({op:#02x?}, {mm})
     }}
-"#, name=op.name, op=op.op, mm=op.mm()).unwrap();
+"#,
+        name = op.name,
+        op = op.op,
+        mm = op.mm()
+    )
+    .unwrap();
 }
 
 #[allow(unused_macros)]
@@ -206,9 +241,13 @@ fn write_ops(f: &mut File) {
         }
     }
 
-
     for op in ops.no_operands {
         write_op_no_operand(f, op);
+    }
+
+    for op in ops.reg_rm_reg {
+        write_op_reg_mem_reg(f, op.clone());
+        write_op_reg_reg_reg(f, op);
     }
 
     writeln!(f, "}}").unwrap();

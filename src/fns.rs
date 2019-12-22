@@ -3,7 +3,7 @@ use crate::params::{
     mem::{Memory, ModRM},
     GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W8,
 };
-use crate::{Assembler, WritableImmediate, REXB, REXR, REXW};
+use crate::{Assembler, Vex, WritableImmediate, REXB, REXR, REXW, REXX};
 use std::io;
 
 include!(concat!(env!("OUT_DIR"), "/fns.rs"));
@@ -60,6 +60,86 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         )
     }
 
+    fn op_reg_reg_reg<Width: WWidth, RD, RS1, RS2>(
+        &mut self,
+        r1: RD,
+        r2: RS1,
+        r3: RS2,
+        mm: u8,
+        op: u8,
+        pp: u8,
+    ) -> io::Result<()>
+    where
+        RD: GeneralRegister<Width>,
+        RS1: GeneralRegister<Width>,
+        RS2: GeneralRegister<Width>,
+    {
+        // RD gets VEX.R
+        // RS1 gets VEX.B
+        // VEX.X doesn't exist
+        // RS2 gets vvvv
+
+        let rd = r1.into();
+        let rs1 = r2.into();
+        let rs2 = r3.into();
+
+        let r = !rd.needs_rex();
+        let b = !rs1.needs_rex();
+
+        let vex = Vex::new((!(rs2 as u8)) & 0xf, pp, mm, r, true, b, Width::IS_W64);
+
+        let mod_rm = ModRM::new(0b11, rd.writable(), rs1.writable());
+
+        self.write_vex(vex)?;
+        self.write_byte(op)?;
+        self.write_mod_rm(mod_rm)
+    }
+
+    fn op_reg_mem_reg<Width: WWidth, R1, M, R2>(
+        &mut self,
+        r1: R1,
+        mem: M,
+        r2: R2,
+        mm: u8,
+        op: u8,
+        pp: u8,
+    ) -> io::Result<()>
+    where
+        R1: GeneralRegister<Width>,
+        M: Memory<Width>,
+        R2: GeneralRegister<Width>,
+    {
+        // r1 gets VEX.R
+        // r2 gets vvvv
+
+        let rd = r1.into();
+        let mem = mem.into();
+        let rs = r2.into();
+
+        let r = !rd.needs_rex();
+        let x = (mem.rex_byte() & REXX) == 0;
+        let b = (mem.rex_byte() & REXB) == 0;
+
+        let vex = Vex::new((!(rs as u8)) & 0xf, pp, mm, r, x, b, Width::IS_W64);
+
+        let (mod_rm, sib, displacement) = mem.encoded();
+        let mod_rm = mod_rm.with_reg(rd.writable());
+
+        self.write_vex(vex)?;
+        self.write_byte(op)?;
+        self.write_mod_rm(mod_rm)?;
+
+        if let Some(sib) = sib {
+            self.write_sib(sib)?;
+        }
+
+        if let Some(displacement) = displacement {
+            self.write_displacement(displacement)?;
+        }
+
+        Ok(())
+    }
+
     fn op_rm_imm<Width: WWidth>(
         &mut self,
         mod_bytes: (ModRM, Option<SIB>, Option<Displacement>),
@@ -74,7 +154,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let mut rex_byte = initial_rex;
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             rex_byte |= REXW;
         }
 
@@ -161,7 +241,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             self.write_byte(0x66)?;
         }
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             self.write_byte(REXW)?;
         }
 
@@ -180,9 +260,9 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op: u8,
         prefix: Option<u8>,
     ) -> io::Result<()>
-        where
-            R: GeneralRegister<Width>,
-            M: Memory<Width>,
+    where
+        R: GeneralRegister<Width>,
+        M: Memory<Width>,
     {
         if Width::IS_W16 {
             self.write_byte(0x66)?;
@@ -207,7 +287,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             rex |= 0b0100_0000;
         }
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             rex |= REXW;
         }
 
@@ -247,9 +327,9 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op: u8,
         prefix: Option<u8>,
     ) -> io::Result<()>
-        where
-            R1: GeneralRegister<Width>,
-            R2: GeneralRegister<Width>,
+    where
+        R1: GeneralRegister<Width>,
+        R2: GeneralRegister<Width>,
     {
         if Width::IS_W16 {
             self.write_byte(0x66)?;
@@ -274,7 +354,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             rex |= 0b0100_0000;
         }
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             rex |= REXW;
         }
 
@@ -330,7 +410,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             rex |= REXR;
         }
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             rex |= REXW;
         }
 
@@ -382,7 +462,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             rex |= REXR;
         }
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             rex |= REXW;
         }
 
@@ -438,7 +518,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             rex |= REXR;
         }
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             rex |= REXW;
         }
 
@@ -490,7 +570,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             rex |= REXR;
         }
 
-        if Width::HAS_REXW {
+        if Width::IS_W64 {
             rex |= REXW;
         }
 
@@ -524,4 +604,34 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
     // xor_hi8_imm(Hi8Bit, u8)
     // xor_mem_hi8(Mem<W8>, Hi8Bit)
     // xor_hi8_mem(Hi8Bit, Mem<W8>)
+}
+
+#[cfg(test)]
+mod test {
+    use crate::params::{Reg32, Register};
+    use crate::Assembler;
+    use std::io;
+    use std::io::Cursor;
+
+    fn create_writer(size: usize) -> Cursor<Box<[u8]>> {
+        let inner = vec![0; size].into_boxed_slice();
+        Cursor::new(inner)
+    }
+
+    #[test]
+    fn vex_shlx_encodes() -> io::Result<()> {
+        let mut writer = create_writer(5);
+        let mut assembler = Assembler::new(&mut writer)?;
+
+        assembler.op_reg_reg_reg(Reg32::ZAX, Register::R15, Register::R8, 0b10, 0xf7, 0b01)?;
+
+        assert_eq!(assembler.start_offset(), 0);
+        assert_eq!(assembler.current_offset(), 5);
+
+        assembler.finish()?;
+
+        assert_eq!(&*writer.into_inner(), &[0xc4, 0xc2, 0x39, 0xf7, 0xc7]);
+
+        Ok(())
+    }
 }
