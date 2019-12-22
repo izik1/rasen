@@ -58,6 +58,7 @@ impl SingleSizeOp {
 struct Ops {
     zax_imm: Vec<Op>,
     rm_imm: Vec<Op>,
+    rm_imm8: Vec<Op>,
     rm_sximm8: Vec<SingleSizeOp>,
     reg_rm: Vec<Op>,
     rm_reg: Vec<Op>,
@@ -89,16 +90,30 @@ fn write_op_mem_imm(f: &mut File, op: Op) {
 "#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm.unwrap()).unwrap();
 }
 
+fn write_op_reg_imm8(f: &mut File, op: Op) {
+    writeln!(f, r#"    pub fn {name}_reg_imm8<Width: WWidth, R: GeneralRegister<Width>>(&mut self, reg: R, imm: u8) -> io::Result<()> {{
+        self.op_reg_imm8(reg, imm, {op8:#02x?}, {op:#02x?}, {rm})
+    }}
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm.unwrap()).unwrap();
+}
+
+fn write_op_mem_imm8(f: &mut File, op: Op) {
+    writeln!(f, r#"    pub fn {name}_mem_imm8<Width: WWidth, M: Memory<Width>>(&mut self, mem: M, imm: u8) -> io::Result<()> {{
+        self.op_mem_imm8(mem, imm, {op8:#02x?}, {op:#02x?}, {rm})
+    }}
+"#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm.unwrap()).unwrap();
+}
+
 fn write_op_reg_sximm8(f: &mut File, op: SingleSizeOp) {
     writeln!(f, r#"    pub fn {name}_reg_sximm8<Width: WidthAtLeast16, R: GeneralRegister<Width>>(&mut self, reg: R, imm: i8) -> io::Result<()> {{
-        self.op_reg_sximm8(reg, {op:#02x?}, {rm}, imm)
+        self.op_reg_imm8(reg, imm as u8, {op:#02x?}, {op:#02x?}, {rm})
     }}
 "#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
 }
 
 fn write_op_mem_sximm8(f: &mut File, op: SingleSizeOp) {
     writeln!(f, r#"    pub fn {name}_mem_sximm8<Width: WidthAtLeast16, M: Memory<Width>>(&mut self, mem: M, imm: i8) -> io::Result<()> {{
-        self.op_mem_sximm8(mem, {op:#02x?}, {rm}, imm)
+        self.op_mem_imm8(mem, imm as u8, {op:#02x?}, {op:#02x?}, {rm})
     }}
 "#, name=op.name, op=op.op, rm=op.rm.unwrap()).unwrap();
 }
@@ -162,6 +177,11 @@ fn write_ops(f: &mut File) {
     for op in ops.rm_imm {
         write_op_reg_imm(f, op.clone());
         write_op_mem_imm(f, op);
+    }
+
+    for op in ops.rm_imm8 {
+        write_op_reg_imm8(f, op.clone());
+        write_op_mem_imm8(f, op);
     }
 
     for op in ops.rm_sximm8 {
