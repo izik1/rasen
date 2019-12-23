@@ -154,6 +154,7 @@ where
             WritableImmediate::W8(byte) => self.write_byte(byte),
             WritableImmediate::W16(word) => self.write_word(word),
             WritableImmediate::W32(dword) => self.write_dword(dword),
+            WritableImmediate::W64(qword) => self.write_qword(qword),
         }
     }
 }
@@ -174,6 +175,7 @@ pub enum WritableImmediate {
     W8(u8),
     W16(u16),
     W32(u32),
+    W64(u64),
 }
 
 #[derive(Copy, Clone)]

@@ -436,6 +436,24 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         self.write_byte(opcode)
     }
 
+    pub fn mov_reg_imm64<R: GeneralRegister<W64>>(&mut self, reg: R, imm: u64) -> io::Result<()> {
+        let reg = reg.into();
+
+        if reg.needs_rex() {
+            self.write_byte(REXW | REXR)?;
+        } else {
+            self.write_byte(REXW)?;
+        }
+
+        let opcode: u8 = 0xb8;
+
+        self.write_byte(opcode)?;
+
+        self.write_immediate(WritableImmediate::W64(imm))?;
+
+        Ok(())
+    }
+
     pub fn movzx_reg_mem8<Width: WidthAtLeast16, R: GeneralRegister<Width>, M: Memory<W8>>(
         &mut self,
         reg: R,
