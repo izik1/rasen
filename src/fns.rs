@@ -1,7 +1,7 @@
 use crate::params::mem::{Displacement, SIB};
 use crate::params::{
     mem::{Memory, ModRM},
-    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W8,
+    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W8, W64,
 };
 use crate::{Assembler, Vex, WritableImmediate, REXB, REXR, REXW, REXX};
 use std::io;
@@ -24,9 +24,9 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         let reg = reg.into();
         let initial_rex = if reg.needs_rex() { REXB } else { 0b0000_0000 };
 
-        self.op_rm_imm::<Width>(
+        self.op_rm::<Width>(
             (ModRM::new(0b11, rm_bits, reg.writable()), None, None),
-            WritableImmediate::W8(imm),
+            Some(WritableImmediate::W8(imm)),
             // this is unused, since Width >= 16, but we have to put _something_ there.
             op8,
             op,
@@ -50,9 +50,56 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let (mod_rm, sib, displacement) = mem.encoded();
 
-        self.op_rm_imm::<Width>(
+        self.op_rm::<Width>(
             (mod_rm.with_op(rm_bits), sib, displacement),
-            WritableImmediate::W8(imm),
+            Some(WritableImmediate::W8(imm)),
+            // this is unused, since Width >= 16, but we have to put _something_ there.
+            op8,
+            op,
+            mem.rex_byte(),
+        )
+    }
+
+    fn op_reg<Width: WWidth, R: GeneralRegister<Width>>(&mut self, reg: R, op8: u8, op: u8, rm_bits: Option<u8>, mm: Option<u8>) -> io::Result<()> {
+        let reg = reg.into();
+        let initial_rex = if reg.needs_rex() { REXB } else { 0b0000_0000 };
+
+        if let Some(mm) = mm {
+            self.write_byte(mm)?;
+        }
+
+        self.op_rm::<Width>(
+            (ModRM::new(0b11, rm_bits.unwrap_or(0), reg.writable()), None, None),
+            None,
+            // this is unused, since Width >= 16, but we have to put _something_ there.
+            op8,
+            op,
+            initial_rex,
+        )
+    }
+
+    fn op_mem<Width: WWidth, M: Memory<Width>>(
+        &mut self,
+        mem: M,
+        op8: u8,
+        op: u8,
+        rm_bits: Option<u8>, mm: Option<u8>,
+    ) -> io::Result<()> {
+        let mem = mem.into();
+
+        if let Some(prefix) = mem.address_prefix() {
+            self.write_byte(prefix)?;
+        }
+
+        if let Some(mm) = mm {
+            self.write_byte(mm)?;
+        }
+
+        let (mod_rm, sib, displacement) = mem.encoded();
+
+        self.op_rm::<Width>(
+            (mod_rm.with_op(rm_bits.unwrap_or(0)), sib, displacement),
+            None,
             // this is unused, since Width >= 16, but we have to put _something_ there.
             op8,
             op,
@@ -140,10 +187,10 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         Ok(())
     }
 
-    fn op_rm_imm<Width: WWidth>(
+    fn op_rm<Width: WWidth>(
         &mut self,
         mod_bytes: (ModRM, Option<SIB>, Option<Displacement>),
-        imm: WritableImmediate,
+        imm: Option<WritableImmediate>,
         op8: u8,
         op: u8,
         initial_rex: u8,
@@ -176,7 +223,11 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             self.write_displacement(displacement)?;
         }
 
-        self.write_immediate(imm)
+        if let Some(imm) = imm {
+            self.write_immediate(imm)?;
+        }
+
+        Ok(())
     }
 
     fn op_mem_imm<Width: WWidth, M: Memory<Width>>(
@@ -195,9 +246,9 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
         let (mod_rm, sib, displacement) = mem.encoded();
 
-        self.op_rm_imm::<Width>(
+        self.op_rm::<Width>(
             (mod_rm.with_op(rm_bits), sib, displacement),
-            imm.as_writable(),
+            Some(imm.as_writable()),
             op8,
             op,
             mem.rex_byte(),
@@ -222,9 +273,9 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
             initial_rex |= 0b0100_0000;
         }
 
-        self.op_rm_imm::<Width>(
+        self.op_rm::<Width>(
             (ModRM::new(0b11, rm_bits, reg.writable()), None, None),
-            imm.as_writable(),
+            Some(imm.as_writable()),
             op8,
             op,
             initial_rex,

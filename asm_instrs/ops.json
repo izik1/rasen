@@ -930,5 +930,334 @@
       "op": 247,
       "pp": 3
     }
+  ],
+  "rm": [
+    {
+      "name": "call",
+      "min": 64,
+      "max": 64,
+      "op": 255,
+      "rm": 2
+    },
+    {
+      "name": "dec",
+      "min": 8,
+      "max": 64,
+      "op": 255,
+      "op8": 254,
+      "rm": 1
+    },
+    {
+      "name": "inc",
+      "min": 8,
+      "max": 64,
+      "op": 255,
+      "op8": 254,
+      "rm": 0
+    },
+    {
+      "name": "lldt",
+      "min": 16,
+      "max": 16,
+      "mm": 15,
+      "op": 0,
+      "rm": 2
+    },
+    {
+      "name": "lmsw",
+      "min": 16,
+      "max": 16,
+      "mm": 15,
+      "op": 1,
+      "rm": 6
+    },
+    {
+      "name": "ltr",
+      "min": 16,
+      "max": 16,
+      "mm": 15,
+      "op": 0,
+      "rm": 3
+    },
+    {
+      "name": "neg",
+      "min": 8,
+      "max": 64,
+      "op": 247,
+      "op8": 246,
+      "rm": 3
+    },
+    {
+      "name": "nop",
+      "min": 16,
+      "max": 32,
+      "mm": 15,
+      "op": 31,
+      "rm": 0
+    },
+    {
+      "name": "not",
+      "min": 8,
+      "max": 64,
+      "op": 247,
+      "op8": 246,
+      "rm": 2
+    },
+    {
+      "name": "seta",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 151,
+      "op8": 151
+    },
+    {
+      "name": "setae",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 147,
+      "op8": 147
+    },
+    {
+      "name": "setb",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 146,
+      "op8": 146
+    },
+    {
+      "name": "setbe",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 150,
+      "op8": 150
+    },
+    {
+      "name": "setc",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 146,
+      "op8": 146
+    },
+    {
+      "name": "sete",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 148,
+      "op8": 148
+    },
+    {
+      "name": "setg",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 159,
+      "op8": 159
+    },
+    {
+      "name": "setge",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 157,
+      "op8": 157
+    },
+    {
+      "name": "setl",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 156,
+      "op8": 156
+    },
+    {
+      "name": "setle",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 158,
+      "op8": 158
+    },
+    {
+      "name": "setna",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 150,
+      "op8": 150
+    },
+    {
+      "name": "setnae",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 146,
+      "op8": 146
+    },
+    {
+      "name": "setnb",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 147,
+      "op8": 147
+    },
+    {
+      "name": "setnbe",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 151,
+      "op8": 151
+    },
+    {
+      "name": "setnc",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 147,
+      "op8": 147
+    },
+    {
+      "name": "setne",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 149,
+      "op8": 149
+    },
+    {
+      "name": "setng",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 158,
+      "op8": 158
+    },
+    {
+      "name": "setnge",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 156,
+      "op8": 156
+    },
+    {
+      "name": "setnl",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 157,
+      "op8": 157
+    },
+    {
+      "name": "setnle",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 159,
+      "op8": 159
+    },
+    {
+      "name": "setno",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 145,
+      "op8": 145
+    },
+    {
+      "name": "setnp",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 155,
+      "op8": 155
+    },
+    {
+      "name": "setns",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 153,
+      "op8": 153
+    },
+    {
+      "name": "setnz",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 149,
+      "op8": 149
+    },
+    {
+      "name": "seto",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 144,
+      "op8": 144
+    },
+    {
+      "name": "setp",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 154,
+      "op8": 154
+    },
+    {
+      "name": "setpe",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 154,
+      "op8": 154
+    },
+    {
+      "name": "setpo",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 155,
+      "op8": 155
+    },
+    {
+      "name": "sets",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 152,
+      "op8": 152
+    },
+    {
+      "name": "setz",
+      "min": 8,
+      "max": 8,
+      "mm": 15,
+      "op": 148,
+      "op8": 148
+    },
+    {
+      "name": "verr",
+      "min": 16,
+      "max": 16,
+      "mm": 15,
+      "op": 0,
+      "rm": 4
+    },
+    {
+      "name": "verw",
+      "min": 16,
+      "max": 16,
+      "mm": 15,
+      "op": 0,
+      "rm": 5
+    }
   ]
 }
