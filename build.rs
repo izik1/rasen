@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::env;
+use std::{env, io};
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -12,6 +12,14 @@ trait Opcode {
         Path::new(&root_dir)
             .join("asm_instrs")
             .join(Self::FILE_NAME)
+    }
+}
+
+fn display_hex(v: Option<u8>) -> String {
+    if let Some(v) = v {
+        format!("Some({:#02x?})", v)
+    } else {
+        "None".to_owned()
     }
 }
 
@@ -28,11 +36,11 @@ struct Op {
 
 impl Op {
     fn mm(&self) -> String {
-        if let Some(mm) = self.mm {
-            format!("Some({:#02x?})", mm)
-        } else {
-            "None".to_owned()
-        }
+        display_hex(self.mm)
+    }
+
+    fn rm(&self) -> String {
+        display_hex(self.rm)
     }
 }
 
@@ -46,11 +54,7 @@ struct SingleSizeOp {
 
 impl SingleSizeOp {
     fn mm(&self) -> String {
-        if let Some(mm) = self.mm {
-            format!("Some({:#02x?})", mm)
-        } else {
-            "None".to_owned()
-        }
+        display_hex(self.mm)
     }
 }
 
@@ -73,6 +77,7 @@ struct Ops {
     rm_reg: Vec<Op>,
     no_operands: Vec<SingleSizeOp>,
     reg_rm_reg: Vec<VexOp>,
+    rm: Vec<Op>,
 }
 
 impl Opcode for Op {
@@ -176,6 +181,37 @@ fn write_op_reg_reg_reg(f: &mut File, op: VexOp) {
 "#, name=op.name, op=op.op, mm=op.mm, pp=op.pp).unwrap();
 }
 
+
+fn write_op_reg(f: &mut File, op: Op) -> io::Result<()> {
+    write!(f, "    pub fn {name}_reg", name=op.name)?;
+
+    if op.max == op.min {
+        write!(f, "{size}<R: GeneralRegister<W{size}>>", size=op.min)?;
+    } else {
+        write!(f, "<Width: {width_bound}, R: GeneralRegister<Width>>", width_bound=width_bound(&op))?;
+    }
+
+    writeln!(f, r#"(&mut self, reg: R) -> io::Result<()> {{
+        self.op_reg(reg, {op8:#02x?}, {op:#02x?}, {rm}, {mm})
+    }}
+"#, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm(), mm=op.mm())
+}
+
+fn write_op_mem(f: &mut File, op: Op) -> io::Result<()> {
+    write!(f, "    pub fn {name}_mem", name=op.name)?;
+
+    if op.max == op.min {
+        write!(f, "{size}<M: Memory<W{size}>>", size=op.min)?;
+    } else {
+        write!(f, "<Width: {width_bound}, M: Memory<Width>>", width_bound=width_bound(&op))?;
+    }
+
+    writeln!(f, r#"(&mut self, mem: M) -> io::Result<()> {{
+        self.op_mem(mem, {op8:#02x?}, {op:#02x?}, {rm}, {mm})
+    }}
+"#, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm(), mm=op.mm())
+}
+
 fn write_op_no_operand(f: &mut File, op: SingleSizeOp) {
     assert_eq!(op.rm, None);
     writeln!(
@@ -250,8 +286,19 @@ fn write_ops(f: &mut File) {
         write_op_reg_reg_reg(f, op);
     }
 
+
+    for op in ops.rm {
+        write_op_reg(f, op.clone()).unwrap();
+        write_op_mem(f, op).unwrap();
+    }
+
     writeln!(f, "}}").unwrap();
 }
+
+// todo: M encoded instructions (including singles)
+// todo: figure out native width Imm64 along with interaction between that and displacement
+//  (can't use Imm64 _and_ i32 displacement, only i8 displacement)
+// todo: OI encoding (needed for `mov zr, imm`)
 
 fn main() {
     cargo_emit::rerun_if_changed!("{}", Op::path().to_str().unwrap());
