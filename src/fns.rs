@@ -20,9 +20,14 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op8: u8,
         op: u8,
         rm_bits: u8,
+        prefix: Option<u8>,
     ) -> io::Result<()> {
         let reg = reg.into();
         let initial_rex = if reg.needs_rex() { REXB } else { 0b0000_0000 };
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
 
         self.op_rm::<Width>(
             (ModRM::new(0b11, rm_bits, reg.writable()), None, None),
@@ -41,8 +46,13 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op8: u8,
         op: u8,
         rm_bits: u8,
+        prefix: Option<u8>,
     ) -> io::Result<()> {
         let mem = mem.into();
+
+        if let Some(prefix) = prefix {
+            self.write_byte(prefix)?;
+        }
 
         if let Some(prefix) = mem.address_prefix() {
             self.write_byte(prefix)?;
