@@ -1,13 +1,12 @@
 use crate::params::mem::{Displacement, SIB};
 use crate::params::{
     mem::{Memory, ModRM},
-    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W64,
-    W8,
+    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, W16, W64, W8,
 };
 use crate::{Assembler, Vex, WritableImmediate, REXB, REXR, REXW, REXX};
 use std::io;
 
-include!(concat!(env!("OUT_DIR"), "/fns.rs"));
+mod generated;
 
 // todo: maybe redirect to `op_reg_imm` if `Width == 8` instead of WidthAtLeast16 trait bound?
 //  above is not doable without const_generics, because `WidthAtLeast16` != W8,

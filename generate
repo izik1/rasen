@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+cd rasen-codegen
+cargo run
+cd -
+rustfmt src/fns/generated.rs

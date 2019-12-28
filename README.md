@@ -12,10 +12,17 @@ the author has managed to use it in one of their own projects.
 * Documentation doesn't exist.
 * Breaking changes are likely to be common.
 * Missing most variants of most instructions.
-* Uses a build script for generating instructions 
-  * (to be replaced with a `bin` + commit hook)
-  * Currently more bloated than we need to be due to this 
-  (can't compile without serde)
 * Some instructions _may_ be flat out broken.
   * Tests don't exist for anything except most of the direct encoding functions.
 * Missing other target arches.
+
+## Modifying
+After modifying anything to do with codegen, you need to run:
+```shell script
+./generate
+```
+This is to allow IDE completion, allow downstream dependents
+to not have to depend on serde, and enable faster downstream
+compile times of the crate.
+
+`pre-commit` is also supported if you wish to use that.

@@ -1,17 +1,19 @@
+// todo: Move to a workspace?
+
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::{env, io};
 
+const OPS: &'static str = include_str!("../../asm_instrs/ops.json");
+
 trait Opcode {
     const FILE_NAME: &'static str;
 
     fn path() -> PathBuf {
         let root_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-        Path::new(&root_dir)
-            .join("asm_instrs")
-            .join(Self::FILE_NAME)
+        Path::new(&root_dir).join("asm_instrs").join("ops.json")
     }
 }
 
@@ -78,10 +80,6 @@ struct Ops {
     no_operands: Vec<SingleSizeOp>,
     reg_rm_reg: Vec<VexOp>,
     rm: Vec<Op>,
-}
-
-impl Opcode for Op {
-    const FILE_NAME: &'static str = "ops.json";
 }
 
 fn write_op_zax_imm(f: &mut File, op: Op) {
@@ -257,9 +255,22 @@ macro_rules! skip_name {
 }
 
 fn write_ops(f: &mut File) {
+    writeln!(
+        f,
+        r#"use crate::params::{{
+    mem::Memory,
+    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W64,
+    W8,
+}};
+use crate::Assembler;
+use std::io;
+"#
+    )
+    .unwrap();
+
     writeln!(f, "impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {{").unwrap();
 
-    let ops: Ops = serde_json::from_reader(File::open(Op::path()).unwrap()).unwrap();
+    let ops: Ops = serde_json::from_str(OPS).unwrap();
 
     for op in ops.zax_imm {
         write_op_zax_imm(f, op);
@@ -315,10 +326,9 @@ fn write_ops(f: &mut File) {
 }
 
 fn main() {
-    println!("cargo:rerun_if_changed={}", Op::path().to_str().unwrap());
-
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("fns.rs");
+    // crate_root/src/fns/generated.rs
+    let dest_path = concat!(env!("CARGO_MANIFEST_DIR"), "/../src/fns/generated.rs");
+    let dest_path = Path::new(&dest_path);
     let mut f = File::create(&dest_path).unwrap();
 
     write_ops(&mut f);

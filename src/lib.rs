@@ -1,11 +1,15 @@
-#![allow(clippy::inline_always)]
+#![allow(
+    clippy::inline_always,
+    clippy::cast_sign_loss,
+    clippy::cast_possible_truncation
+)]
 
 use std::io::{self, Seek, SeekFrom, Write};
 
 use std::collections::HashMap;
 
 mod emitter;
-pub mod fns;
+mod fns;
 mod labeler;
 pub mod params;
 
