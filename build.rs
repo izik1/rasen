@@ -301,7 +301,7 @@ fn write_ops(f: &mut File) {
 // todo: OI encoding (needed for `mov zr, imm`)
 
 fn main() {
-    cargo_emit::rerun_if_changed!("{}", Op::path().to_str().unwrap());
+    println!("cargo:rerun_if_changed={}", Op::path().to_str().unwrap());
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("fns.rs");
