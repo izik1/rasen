@@ -1,14 +1,15 @@
-use crate::WritableImmediate;
-
+pub mod imm;
 pub mod mem;
 pub mod reg;
-
-pub use reg::{GeneralRegister, Reg16, Reg32, Reg64, Reg8, Register};
 
 pub struct W8;
 pub struct W16;
 pub struct W32;
 pub struct W64;
+
+pub use imm::Immediate;
+pub use mem::Memory;
+pub use reg::GeneralRegister;
 
 mod private {
     pub trait Sealed {}
@@ -60,39 +61,3 @@ pub trait WidthAtMost16: WWidth {}
 
 impl WidthAtMost16 for W8 {}
 impl WidthAtMost16 for W16 {}
-
-pub struct Imm8(pub u8);
-
-pub struct Imm16(pub u16);
-
-pub struct Imm32(pub u32);
-
-pub struct Imm64(pub i32);
-
-pub trait Immediate<Width: WWidth> {
-    fn as_writable(&self) -> WritableImmediate;
-}
-
-impl Immediate<W8> for Imm8 {
-    fn as_writable(&self) -> WritableImmediate {
-        WritableImmediate::W8(self.0)
-    }
-}
-
-impl Immediate<W16> for Imm16 {
-    fn as_writable(&self) -> WritableImmediate {
-        WritableImmediate::W16(self.0)
-    }
-}
-
-impl Immediate<W32> for Imm32 {
-    fn as_writable(&self) -> WritableImmediate {
-        WritableImmediate::W32(self.0)
-    }
-}
-
-impl Immediate<W64> for Imm64 {
-    fn as_writable(&self) -> WritableImmediate {
-        WritableImmediate::W32(self.0 as u32)
-    }
-}

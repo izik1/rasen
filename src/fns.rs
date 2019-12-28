@@ -689,7 +689,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
 #[cfg(test)]
 mod test {
-    use crate::params::Reg32;
+    use crate::params::reg::Reg32;
     use crate::Assembler;
     use std::io;
     use std::io::Cursor;
