@@ -19,4 +19,3 @@ the author has managed to use it in one of their own projects.
 * Some instructions _may_ be flat out broken.
   * Tests don't exist for anything except most of the direct encoding functions.
 * Missing other target arches.
-* Don't use macros where possible. (better IDE completion)
