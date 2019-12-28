@@ -117,28 +117,24 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         )
     }
 
-    fn op_reg_reg_reg<Width: WWidth, RD, RS1, RS2>(
+    fn op_reg_reg_reg<Width: WWidth, R: GeneralRegister<Width>>(
         &mut self,
-        r1: RD,
-        r2: RS1,
-        r3: RS2,
+        rd: R,
+        rs1: R,
+        rs2: R,
         mm: u8,
         op: u8,
         pp: u8,
     ) -> io::Result<()>
-    where
-        RD: GeneralRegister<Width>,
-        RS1: GeneralRegister<Width>,
-        RS2: GeneralRegister<Width>,
     {
         // RD gets VEX.R
         // RS1 gets VEX.B
         // VEX.X doesn't exist
         // RS2 gets vvvv
 
-        let rd = r1.into();
-        let rs1 = r2.into();
-        let rs2 = r3.into();
+        let rd = rd.into();
+        let rs1 = rs1.into();
+        let rs2 = rs2.into();
 
         let r = !rd.needs_rex();
         let b = !rs1.needs_rex();
@@ -152,19 +148,18 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         self.write_mod_rm(mod_rm)
     }
 
-    fn op_reg_mem_reg<Width: WWidth, R1, M, R2>(
+    fn op_reg_mem_reg<Width: WWidth, R, M>(
         &mut self,
-        r1: R1,
+        r1: R,
         mem: M,
-        r2: R2,
+        r2: R,
         mm: u8,
         op: u8,
         pp: u8,
     ) -> io::Result<()>
     where
-        R1: GeneralRegister<Width>,
+        R: GeneralRegister<Width>,
         M: Memory<Width>,
-        R2: GeneralRegister<Width>,
     {
         // r1 gets VEX.R
         // r2 gets vvvv
@@ -380,17 +375,14 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
     }
 
     // note: reg1 gets written to reg and reg2 gets written to R/M
-    fn op_reg_reg<Width: WWidth, R1, R2>(
+    fn op_reg_reg<Width: WWidth, R: GeneralRegister<Width>>(
         &mut self,
-        reg1: R1,
-        reg2: R2,
+        reg1: R,
+        reg2: R,
         op8: u8,
         op: u8,
         prefix: Option<u8>,
     ) -> io::Result<()>
-    where
-        R1: GeneralRegister<Width>,
-        R2: GeneralRegister<Width>,
     {
         if Width::IS_W16 {
             self.write_byte(0x66)?;
@@ -702,7 +694,7 @@ mod test {
         let mut writer = create_writer(5);
         let mut assembler = Assembler::new(&mut writer)?;
 
-        assembler.op_reg_reg_reg(Reg32::ZAX, Register::R15, Register::R8, 0b10, 0xf7, 0b01)?;
+        assembler.op_reg_reg_reg(Reg32::ZAX, Reg32::R15, Reg32::R8, 0b10, 0xf7, 0b01)?;
 
         assert_eq!(assembler.start_offset(), 0);
         assert_eq!(assembler.current_offset(), 5);

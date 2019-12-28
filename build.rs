@@ -157,15 +157,15 @@ fn write_op_reg_mem(f: &mut File, op: Op) {
 }
 
 fn write_op_reg_reg(f: &mut File, op: Op) {
-    writeln!(f, r#"    pub fn {name}_reg_reg<Width: {width_bound}, R1, R2>(&mut self, reg1: R1, reg2: R2) -> io::Result<()> where R1: GeneralRegister<Width>, R2: GeneralRegister<Width> {{
+    writeln!(f, r#"    pub fn {name}_reg_reg<Width: {width_bound}, R>(&mut self, reg1: R, reg2: R) -> io::Result<()> where R: GeneralRegister<Width> {{
         self.op_reg_reg(reg1, reg2, {op8:#02x?}, {op:#02x?}, {mm})
     }}
 "#, name=op.name, op=op.op, op8=op.op8.unwrap_or(op.op), width_bound=width_bound(&op), mm=op.mm()).unwrap();
 }
 
 fn write_op_reg_mem_reg(f: &mut File, op: VexOp) {
-    writeln!(f, r#"    pub fn {name}_reg_mem_reg<Width: WidthAtLeast32, R1, M, R2>(&mut self, rd: R1, mem: M, rs: R2) -> io::Result<()>
-        where R1: GeneralRegister<Width>, M: Memory<Width>, R2: GeneralRegister<Width>
+    writeln!(f, r#"    pub fn {name}_reg_mem_reg<Width: WidthAtLeast32, R, M>(&mut self, rd: R, mem: M, rs: R) -> io::Result<()>
+        where R: GeneralRegister<Width>, M: Memory<Width>
     {{
         self.op_reg_mem_reg(rd, mem, rs, {mm:#02x?}, {op:#02x?}, {pp:#02x?})
     }}
@@ -173,8 +173,7 @@ fn write_op_reg_mem_reg(f: &mut File, op: VexOp) {
 }
 
 fn write_op_reg_reg_reg(f: &mut File, op: VexOp) {
-    writeln!(f, r#"    pub fn {name}_reg_reg_reg<Width: WidthAtLeast32, RD, RS1, RS2>(&mut self, rd: RD, rs1: RS1, rs2: RS2) -> io::Result<()>
-        where RD: GeneralRegister<Width>, RS1: GeneralRegister<Width>, RS2: GeneralRegister<Width>
+    writeln!(f, r#"    pub fn {name}_reg_reg_reg<Width: WidthAtLeast32, R: GeneralRegister<Width>>(&mut self, rd: R, rs1: R, rs2: R) -> io::Result<()>
     {{
         self.op_reg_reg_reg(rd, rs1, rs2, {mm:#02x?}, {op:#02x?}, {pp:#02x?})
     }}
@@ -294,11 +293,6 @@ fn write_ops(f: &mut File) {
 
     writeln!(f, "}}").unwrap();
 }
-
-// todo: M encoded instructions (including singles)
-// todo: figure out native width Imm64 along with interaction between that and displacement
-//  (can't use Imm64 _and_ i32 displacement, only i8 displacement)
-// todo: OI encoding (needed for `mov zr, imm`)
 
 fn main() {
     println!("cargo:rerun_if_changed={}", Op::path().to_str().unwrap());
