@@ -1,3 +1,4 @@
 /target
+rasen-codegen/target
 **/*.rs.bk
 Cargo.lock

@@ -1,4 +1,4 @@
-use crate::params::{Register, W16, W32, W64, W8, WWidth};
+use crate::params::{Register, WWidth, W16, W32, W64, W8};
 
 pub enum Displacement {
     Disp8(i8),

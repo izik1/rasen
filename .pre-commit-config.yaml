@@ -1,0 +1,15 @@
+-   repo: local
+    hooks:
+    -   id: rasen-code-gen
+        name: CodeGen
+        description: Runs rasen code gen.
+        entry: ./generate
+        language: system
+        types: [text]
+        pass_filenames: false
+        always_run: true
+-   repo: https://github.com/doublify/pre-commit-rust
+    rev: master
+    hooks:
+      -   id: fmt
+      -   id: cargo-check
