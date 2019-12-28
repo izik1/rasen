@@ -1,7 +1,8 @@
 use crate::params::mem::{Displacement, SIB};
 use crate::params::{
     mem::{Memory, ModRM},
-    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W8, W64,
+    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32, W16, W64,
+    W8,
 };
 use crate::{Assembler, Vex, WritableImmediate, REXB, REXR, REXW, REXX};
 use std::io;
@@ -70,7 +71,14 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         )
     }
 
-    fn op_reg<Width: WWidth, R: GeneralRegister<Width>>(&mut self, reg: R, op8: u8, op: u8, rm_bits: Option<u8>, mm: Option<u8>) -> io::Result<()> {
+    fn op_reg<Width: WWidth, R: GeneralRegister<Width>>(
+        &mut self,
+        reg: R,
+        op8: u8,
+        op: u8,
+        rm_bits: Option<u8>,
+        mm: Option<u8>,
+    ) -> io::Result<()> {
         let reg = reg.into();
         let initial_rex = if reg.needs_rex() { REXB } else { 0b0000_0000 };
 
@@ -79,7 +87,11 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         }
 
         self.op_rm::<Width>(
-            (ModRM::new(0b11, rm_bits.unwrap_or(0), reg.writable()), None, None),
+            (
+                ModRM::new(0b11, rm_bits.unwrap_or(0), reg.writable()),
+                None,
+                None,
+            ),
             None,
             // this is unused, since Width >= 16, but we have to put _something_ there.
             op8,
@@ -93,7 +105,8 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         mem: M,
         op8: u8,
         op: u8,
-        rm_bits: Option<u8>, mm: Option<u8>,
+        rm_bits: Option<u8>,
+        mm: Option<u8>,
     ) -> io::Result<()> {
         let mem = mem.into();
 
@@ -125,8 +138,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         mm: u8,
         op: u8,
         pp: u8,
-    ) -> io::Result<()>
-    {
+    ) -> io::Result<()> {
         // RD gets VEX.R
         // RS1 gets VEX.B
         // VEX.X doesn't exist
@@ -382,8 +394,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         op8: u8,
         op: u8,
         prefix: Option<u8>,
-    ) -> io::Result<()>
-    {
+    ) -> io::Result<()> {
         if Width::IS_W16 {
             self.write_byte(0x66)?;
         }
@@ -679,7 +690,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
 #[cfg(test)]
 mod test {
-    use crate::params::{Reg32, Register};
+    use crate::params::Reg32;
     use crate::Assembler;
     use std::io;
     use std::io::Cursor;

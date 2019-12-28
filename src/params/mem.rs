@@ -1,4 +1,4 @@
-use crate::params::{Register, W16, W32, W64, W8};
+use crate::params::{Register, W16, W32, W64, W8, WWidth};
 
 pub enum Displacement {
     Disp8(i8),
@@ -344,7 +344,7 @@ impl Mem {
     }
 }
 
-pub trait Memory<Width>: Into<Mem> {}
+pub trait Memory<Width: WWidth>: Into<Mem> {}
 
 impl Memory<W8> for Mem {}
 impl Memory<W16> for Mem {}

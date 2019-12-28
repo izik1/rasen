@@ -1,8 +1,8 @@
 use std::collections::HashSet;
-use std::{env, io};
 use std::fs::File;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::{env, io};
 
 trait Opcode {
     const FILE_NAME: &'static str;
@@ -180,35 +180,56 @@ fn write_op_reg_reg_reg(f: &mut File, op: VexOp) {
 "#, name=op.name, op=op.op, mm=op.mm, pp=op.pp).unwrap();
 }
 
-
 fn write_op_reg(f: &mut File, op: Op) -> io::Result<()> {
-    write!(f, "    pub fn {name}_reg", name=op.name)?;
+    write!(f, "    pub fn {name}_reg", name = op.name)?;
 
     if op.max == op.min {
-        write!(f, "{size}<R: GeneralRegister<W{size}>>", size=op.min)?;
+        write!(f, "{size}<R: GeneralRegister<W{size}>>", size = op.min)?;
     } else {
-        write!(f, "<Width: {width_bound}, R: GeneralRegister<Width>>", width_bound=width_bound(&op))?;
+        write!(
+            f,
+            "<Width: {width_bound}, R: GeneralRegister<Width>>",
+            width_bound = width_bound(&op)
+        )?;
     }
 
-    writeln!(f, r#"(&mut self, reg: R) -> io::Result<()> {{
+    writeln!(
+        f,
+        r#"(&mut self, reg: R) -> io::Result<()> {{
         self.op_reg(reg, {op8:#02x?}, {op:#02x?}, {rm}, {mm})
     }}
-"#, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm(), mm=op.mm())
+"#,
+        op = op.op,
+        op8 = op.op8.unwrap_or(op.op),
+        rm = op.rm(),
+        mm = op.mm()
+    )
 }
 
 fn write_op_mem(f: &mut File, op: Op) -> io::Result<()> {
-    write!(f, "    pub fn {name}_mem", name=op.name)?;
+    write!(f, "    pub fn {name}_mem", name = op.name)?;
 
     if op.max == op.min {
-        write!(f, "{size}<M: Memory<W{size}>>", size=op.min)?;
+        write!(f, "{size}<M: Memory<W{size}>>", size = op.min)?;
     } else {
-        write!(f, "<Width: {width_bound}, M: Memory<Width>>", width_bound=width_bound(&op))?;
+        write!(
+            f,
+            "<Width: {width_bound}, M: Memory<Width>>",
+            width_bound = width_bound(&op)
+        )?;
     }
 
-    writeln!(f, r#"(&mut self, mem: M) -> io::Result<()> {{
+    writeln!(
+        f,
+        r#"(&mut self, mem: M) -> io::Result<()> {{
         self.op_mem(mem, {op8:#02x?}, {op:#02x?}, {rm}, {mm})
     }}
-"#, op=op.op, op8=op.op8.unwrap_or(op.op), rm=op.rm(), mm=op.mm())
+"#,
+        op = op.op,
+        op8 = op.op8.unwrap_or(op.op),
+        rm = op.rm(),
+        mm = op.mm()
+    )
 }
 
 fn write_op_no_operand(f: &mut File, op: SingleSizeOp) {
@@ -284,7 +305,6 @@ fn write_ops(f: &mut File) {
         write_op_reg_mem_reg(f, op.clone());
         write_op_reg_reg_reg(f, op);
     }
-
 
     for op in ops.rm {
         write_op_reg(f, op.clone()).unwrap();
