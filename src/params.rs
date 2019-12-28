@@ -7,9 +7,9 @@ pub struct W16;
 pub struct W32;
 pub struct W64;
 
-pub use imm::Immediate;
-pub use mem::Memory;
-pub use reg::GeneralRegister;
+pub use imm::{Immediate, WritableImmediate};
+pub use mem::{Mem, Memory};
+pub use reg::{GeneralRegister, Register};
 
 mod private {
     pub trait Sealed {}
