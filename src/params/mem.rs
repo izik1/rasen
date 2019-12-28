@@ -351,23 +351,56 @@ impl Memory<W16> for Mem {}
 impl Memory<W32> for Mem {}
 impl Memory<W64> for Mem {}
 
-macro_rules! mem {
-    ($mem:ident, $width:ident) => {
-        /// A wrapper for [`Mem`] That only implements [`Memory<$width>`], to make it more usable as a type param.
-        #[derive(Clone)]
-        pub struct $mem(pub Mem);
+// while the following _would_ look nicer with a macro, IDEs have trouble auto-completing it.
 
-        impl From<$mem> for Mem {
-            fn from(other: $mem) -> Self {
-                other.0
-            }
-        }
+/// A wrapper for [`Mem`] That only implements [`Memory<W8>`], to make it more usable as a type param.
+#[derive(Clone)]
+#[repr(transparent)]
+pub struct Mem8(pub Mem);
 
-        impl Memory<$width> for $mem {}
-    };
+impl From<Mem8> for Mem {
+    fn from(other: Mem8) -> Self {
+        other.0
+    }
 }
 
-mem!(Mem8, W8);
-mem!(Mem16, W16);
-mem!(Mem32, W32);
-mem!(Mem64, W64);
+impl Memory<W8> for Mem8 {}
+
+/// A wrapper for [`Mem`] That only implements [`Memory<W16>`], to make it more usable as a type param.
+#[derive(Clone)]
+#[repr(transparent)]
+pub struct Mem16(pub Mem);
+
+impl From<Mem16> for Mem {
+    fn from(other: Mem16) -> Self {
+        other.0
+    }
+}
+
+impl Memory<W16> for Mem16 {}
+
+/// A wrapper for [`Mem`] That only implements [`Memory<W32>`], to make it more usable as a type param.
+#[derive(Clone)]
+#[repr(transparent)]
+pub struct Mem32(pub Mem);
+
+impl From<Mem32> for Mem {
+    fn from(other: Mem32) -> Self {
+        other.0
+    }
+}
+
+impl Memory<W32> for Mem32 {}
+
+/// A wrapper for [`Mem`] That only implements [`Memory<W64>`], to make it more usable as a type param.
+#[derive(Clone)]
+#[repr(transparent)]
+pub struct Mem64(pub Mem);
+
+impl From<Mem64> for Mem {
+    fn from(other: Mem64) -> Self {
+        other.0
+    }
+}
+
+impl Memory<W64> for Mem64 {}
