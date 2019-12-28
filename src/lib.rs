@@ -15,7 +15,10 @@ pub mod params;
 
 // This is for an x86 assembler for now, TODO: move into a specific module for x86?
 
-use crate::params::mem::{Displacement, ModRM, SIB};
+use crate::params::{
+    imm::WritableImmediate,
+    mem::{Displacement, ModRM, SIB},
+};
 use emitter::Emitter;
 use labeler::Labeler;
 
@@ -174,13 +177,6 @@ const REXR: u8 = 0b0100_0100;
 
 /// forces 64 bit operand width
 const REXW: u8 = 0b0100_1000;
-
-pub enum WritableImmediate {
-    W8(u8),
-    W16(u16),
-    W32(u32),
-    W64(u64),
-}
 
 #[derive(Copy, Clone)]
 struct Vex(u8, u8);
