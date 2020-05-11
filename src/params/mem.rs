@@ -1,5 +1,6 @@
 use crate::params::{reg::Register, WWidth, W16, W32, W64, W8};
 
+#[derive(Debug, Eq, PartialEq)]
 pub enum Displacement {
     Disp8(i8),
     Disp32(i32),
@@ -14,7 +15,7 @@ pub enum Scale {
     X8 = 0b11,
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub(crate) struct ModRM(u8);
 
 impl ModRM {
@@ -55,8 +56,12 @@ impl ModRM {
         self.rm() == Self::SIB_RM && self.r#mod() != 0b11
     }
 
+    fn is_relative(self) -> bool {
+        self.r#mod() == 0 && self.rm() == 0b101
+    }
+
     pub fn has_displacement(self) -> bool {
-        self.r#mod() == 1 || self.r#mod() == 2
+        self.r#mod() == 1 || self.r#mod() == 2 || self.is_relative()
     }
 
     const SIB_RM: u8 = 0b100;
@@ -68,7 +73,7 @@ impl From<ModRM> for u8 {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub(crate) struct SIB(u8);
 
 impl SIB {
@@ -404,3 +409,21 @@ impl From<Mem64> for Mem {
 }
 
 impl Memory<W64> for Mem64 {}
+
+#[cfg(test)]
+mod test {
+    use super::Displacement;
+
+    #[test]
+    fn mod_rm_relative_has_displacement() {
+        let mem = super::Mem::relative_displacement(4);
+        let (mod_rm, sib, disp) = mem.encoded();
+        assert_eq!(mod_rm.r#mod(), 0b00);
+        assert_eq!(mod_rm.reg(), 0b000);
+        assert_eq!(mod_rm.rm(), 0b101);
+
+        assert_eq!(sib, None);
+
+        assert_eq!(disp, Some(Displacement::Disp32(4)));
+    }
+}

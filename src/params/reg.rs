@@ -45,7 +45,7 @@ impl GeneralRegister<W64> for Register {}
 // While a macro _would_ be nice here, it kills ide auto-completion.
 
 /// A wrapper for [`Register`] That only implements [`GeneralRegister<W8>`], to make it more usable as a type param.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Reg8(pub Register);
 
 impl Reg8 {
@@ -76,7 +76,7 @@ impl From<Reg8> for Register {
 impl GeneralRegister<W8> for Reg8 {}
 
 /// A wrapper for [`Register`] That only implements [`GeneralRegister<W16>`], to make it more usable as a type param.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Reg16(pub Register);
 
 impl Reg16 {
@@ -107,7 +107,7 @@ impl From<Reg16> for Register {
 impl GeneralRegister<W16> for Reg16 {}
 
 /// A wrapper for [`Register`] That only implements [`GeneralRegister<W32>`], to make it more usable as a type param.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Reg32(pub Register);
 
 impl Reg32 {
@@ -138,7 +138,7 @@ impl From<Reg32> for Register {
 impl GeneralRegister<W32> for Reg32 {}
 
 /// A wrapper for [`Register`] That only implements [`GeneralRegister<W64>`], to make it more usable as a type param.
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Reg64(pub Register);
 
 impl Reg64 {
