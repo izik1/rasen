@@ -635,7 +635,7 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         reg: R,
         mem: M,
     ) -> io::Result<()> {
-        let op = 0xbe;
+        let op = 0xbf;
         let prefix = Some(0x0f);
 
         let reg = reg.into();
