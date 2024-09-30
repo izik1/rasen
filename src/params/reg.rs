@@ -1,7 +1,7 @@
 use super::{WWidth, W16, W32, W64, W8};
 
 #[repr(u8)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Ord, PartialOrd)]
 pub enum Register {
     Zax = 0,
     Zcx = 1,
