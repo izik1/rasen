@@ -1,8 +1,11 @@
+[workspace]
+members = [".", "rasen-codegen"]
+
 [package]
 name = "rasen"
 version = "0.1.0"
 authors = ["Skyler Ross <orangesnowfox@gmail.com>"]
-edition = "2018"
+edition = "2024"
 description = "A quick spinning code-generator"
 license = "BlueOak-1.0.0"
 

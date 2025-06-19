@@ -1,4 +1,4 @@
-use super::{WWidth, W16, W32, W64, W8};
+use super::{W8, W16, W32, W64, WWidth};
 
 #[derive(Copy, Clone)]
 pub struct Imm8(pub u8);

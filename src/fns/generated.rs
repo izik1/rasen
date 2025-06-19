@@ -1,8 +1,8 @@
-use crate::params::{
-    mem::Memory, GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, WidthAtMost32,
-    W16, W64, W8,
-};
 use crate::Assembler;
+use crate::params::{
+    GeneralRegister, Immediate, W8, W16, W64, WWidth, WidthAtLeast16, WidthAtLeast32,
+    WidthAtMost32, mem::Memory,
+};
 use std::io;
 
 impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
@@ -424,6 +424,22 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
         imm: i8,
     ) -> io::Result<()> {
         self.op_mem_imm8(mem, imm as u8, 0x83, 0x83, 0, None)
+    }
+
+    pub fn and_reg_sximm8<Width: WidthAtLeast16, R: GeneralRegister<Width>>(
+        &mut self,
+        reg: R,
+        imm: i8,
+    ) -> io::Result<()> {
+        self.op_reg_imm8(reg, imm as u8, 0x83, 0x83, 4, None)
+    }
+
+    pub fn and_mem_sximm8<Width: WidthAtLeast16, M: Memory<Width>>(
+        &mut self,
+        mem: M,
+        imm: i8,
+    ) -> io::Result<()> {
+        self.op_mem_imm8(mem, imm as u8, 0x83, 0x83, 4, None)
     }
 
     pub fn cmp_reg_sximm8<Width: WidthAtLeast16, R: GeneralRegister<Width>>(

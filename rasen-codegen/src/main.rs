@@ -3,23 +3,14 @@
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::{env, io};
 
-const OPS: &'static str = include_str!("../../asm_instrs/ops.json");
-
-trait Opcode {
-    const FILE_NAME: &'static str;
-
-    fn path() -> PathBuf {
-        let root_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-        Path::new(&root_dir).join("asm_instrs").join("ops.json")
-    }
-}
+const OPS: &str = include_str!("../../asm_instrs/ops.json");
 
 fn display_hex(v: Option<u8>) -> String {
     if let Some(v) = v {
-        format!("Some({:#02x?})", v)
+        format!("Some({v:#02x?})")
     } else {
         "None".to_owned()
     }
@@ -329,7 +320,7 @@ fn main() {
     // crate_root/src/fns/generated.rs
     let dest_path = concat!(env!("CARGO_MANIFEST_DIR"), "/../src/fns/generated.rs");
     let dest_path = Path::new(&dest_path);
-    let mut f = File::create(&dest_path).unwrap();
+    let mut f = File::create(dest_path).unwrap();
 
     write_ops(&mut f);
 }

@@ -1,9 +1,9 @@
 use crate::params::mem::{Displacement, SIB};
 use crate::params::{
+    GeneralRegister, Immediate, W8, W16, W64, WWidth, WidthAtLeast16, WidthAtLeast32,
     mem::{Memory, ModRM},
-    GeneralRegister, Immediate, WWidth, WidthAtLeast16, WidthAtLeast32, W16, W64, W8,
 };
-use crate::{Assembler, Vex, WritableImmediate, REXB, REXR, REXW, REXX};
+use crate::{Assembler, REXB, REXR, REXW, REXX, Vex, WritableImmediate};
 use std::io;
 
 mod generated;
@@ -689,8 +689,8 @@ impl<'a, T: io::Write + io::Seek> Assembler<'a, T> {
 
 #[cfg(test)]
 mod test {
-    use crate::params::reg::Reg32;
     use crate::Assembler;
+    use crate::params::reg::Reg32;
     use std::io;
     use std::io::Cursor;
 

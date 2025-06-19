@@ -1,4 +1,4 @@
-use super::{WWidth, W16, W32, W64, W8};
+use super::{W8, W16, W32, W64, WWidth};
 
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Ord, PartialOrd)]

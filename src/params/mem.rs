@@ -1,4 +1,4 @@
-use crate::params::{reg::Register, WWidth, W16, W32, W64, W8};
+use crate::params::{W8, W16, W32, W64, WWidth, reg::Register};
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Displacement {
@@ -265,11 +265,7 @@ impl Mem {
     }
 
     pub(crate) fn address_prefix(&self) -> Option<u8> {
-        if self.force_32x {
-            Some(0x67)
-        } else {
-            None
-        }
+        if self.force_32x { Some(0x67) } else { None }
     }
 
     pub(crate) fn encoded(&self) -> (ModRM, Option<SIB>, Option<Displacement>) {
@@ -282,8 +278,8 @@ impl Mem {
     }
 
     pub(crate) fn rex_byte(&self) -> u8 {
-        let b = self.base.map_or(false, |it| it as u8 >= 8) as u8;
-        let x = self.index.map_or(false, |it| it as u8 >= 8) as u8;
+        let b = self.base.is_some_and(|it| it as u8 >= 8) as u8;
+        let x = self.index.is_some_and(|it| it as u8 >= 8) as u8;
 
         if x != 0 || b != 0 {
             0b0100_0000 | (x << 1) | b

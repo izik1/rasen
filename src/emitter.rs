@@ -14,7 +14,7 @@ where
     T: Write + Seek,
 {
     pub fn new(writer: &'a mut T) -> io::Result<Self> {
-        let start_offset = writer.seek(SeekFrom::Current(0))?;
+        let start_offset = writer.stream_position()?;
         Ok(Self {
             start_offset,
             current_offset: start_offset,
